@@ -10,38 +10,60 @@ public class GroundCreatorController : MonoBehaviour
     public float cutoff;
     public int CAIterations;
 
-    public float tileSize;
-    public GameObject tile;
+    
+    public GameObject groundParent;
 
     private bool[] map;
 
-    public GameObject[] tiles;
+    
+
+    public GameObject worldPlaceholder;
 
     public void CreateMap(){
-        DestroyTiles(tiles);
-        tiles = new GameObject[width * height];
         map = StaticNoiseGenerator.GenerateStaticBWNoise(width, height, cutoff);
 
         for(int i = 0; i < CAIterations; i++){
             map = CaveCA.RunTurn(map, width);
         }
 
-        for(int i = 0; i < map.Length; i++){
-            if(map[i]){
-                GameObject newTile = Instantiate(tile, new Vector3((i % width * tileSize) - (.5f * width * tileSize), -Mathf.Floor(i / width) * tileSize + (.5f * height * tileSize)), Quaternion.identity);
-                newTile.transform.localScale = new Vector3(tileSize, tileSize);
-                tiles[i] = newTile;
-            }
-        }
     }
 
     void Start(){
         // createMap();
     }
 
+    
+
+    public void InstantiateMap(){ 
+        Renderer mapPlaceholderRenderer = worldPlaceholder.GetComponent<Renderer>();
+        transform.localScale = new Vector3(width * tileSize / 10, height * tileSize / 10, 1);
+
+        Texture2D texture2D = new Texture2D(width, height);
+        texture2D.filterMode = FilterMode.Point;
+
+        Color[] pixels = new Color[width * height];
+
+        Color green = new Color(0.03529412f, 0.1215686f, 0.01176471f);
+
+        for(int i = 0; i < map.Length; i++){
+            if(map[i]){
+                pixels[i] = green;
+            }else{
+                pixels[i] = Color.white;
+            }
+        }
+
+        texture2D.SetPixels(pixels);
+        texture2D.Apply();
+
+        mapPlaceholderRenderer.sharedMaterial.mainTexture = texture2D;  
+        
+    }
+
     void DestroyTiles(GameObject[] gameObjects){
         for(int i = 0; i < gameObjects.Length; i++){
             DestroyImmediate(gameObjects[i]);
+            gameObjects[i] = null;
         }
     }
 

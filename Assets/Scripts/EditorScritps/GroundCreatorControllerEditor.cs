@@ -11,9 +11,13 @@ public class GroundCreatorControllerEditor : Editor
 
             DrawDefaultInspector();
 
-            if(GUILayout.Button("Generate Map")){
+            if(GUILayout.Button("Create Map")){
                 groundCreator.CreateMap();
             }
+
+            // if(GUILayout.Button("Instantiate Map")){
+            //     groundCreator.InstantiateMap();
+            // }
 
             if(GUILayout.Button("Delete Map")){
                 groundCreator.Reset();
