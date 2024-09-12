@@ -15,7 +15,10 @@ public class GroundCreatorController : MonoBehaviour
 
     private bool[] map;
 
-    
+    public float tileSize;
+    public GameObject tile;
+
+    public GameObject[] tiles; 
 
     public GameObject worldPlaceholder;
 
