@@ -22,12 +22,14 @@ public class GroundCreatorController : MonoBehaviour
 
     public GameObject worldPlaceholder;
 
-    public void CreateMap(){
+    public bool[] CreateMap(){
         map = StaticNoiseGenerator.GenerateStaticBWNoise(width, height, cutoff);
 
         for(int i = 0; i < CAIterations; i++){
             map = CaveCA.RunTurn(map, width);
         }
+
+        return map;
 
     }
 
