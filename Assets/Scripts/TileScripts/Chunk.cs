@@ -26,9 +26,10 @@ public class Chunk : MonoBehaviour
             for(int x = 0; x < width; x++){
                 int index = y * width + x;
                 if(map[index]){
-                    tiles[index] = Instantiate(tilePrefab, new Vector3(x - (width * tileSize / 2),  -y + (height * tileSize / 2)) + gameObject.transform.position, Quaternion.identity);
+                    tiles[index] = Instantiate(tilePrefab, new Vector3(x * tileSize - (width * tileSize / (2)),  -y * tileSize + (height * tileSize / 2)) + gameObject.transform.position, Quaternion.identity);
                     tiles[index].transform.SetParent(gameObject.transform);
-                    tiles[index].GetComponent<Tile>().SetTile(index, this);
+                    tiles[index].transform.localScale = new Vector2(tileSize, tileSize);
+                    //tiles[index].GetComponent<Tile>().SetTile(index, this);
                 }
             }
         }

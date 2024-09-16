@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Unity.VisualScripting;
+using UnityEditor.Search;
 using UnityEngine;
 
 public class ChunkManager : MonoBehaviour
@@ -21,6 +22,9 @@ public class ChunkManager : MonoBehaviour
     public GameObject[] chunks;
 
     public HashSet<Chunk> activeChunks = new HashSet<Chunk>();
+
+    private Queue<Chunk> chunksToBeDestroyed = new Queue<Chunk>();
+    private Queue<Chunk> chunksToBeLoaded = new Queue<Chunk>();
 
     public float chunkCheckRadius;
     public LayerMask checkLayerMask;
@@ -148,14 +152,25 @@ public class ChunkManager : MonoBehaviour
         IEnumerable<Chunk> chunksToActivate = chunks.Except(activeChunks);
 
         foreach(Chunk chunk in chunksToDeactivate){
-            chunk.DestroyChunk();
+            chunksToBeDestroyed.Enqueue(chunk);
         }
 
         foreach(Chunk chunk in chunksToActivate){
-            chunk.InstantiateChunk();
+            chunksToBeLoaded.Enqueue(chunk);
         }
 
         activeChunks = chunks;
+    }
+
+    public void LoadAndDeloadChunks(){
+        Chunk result;
+        if(chunksToBeDestroyed.TryPeek(out result)){
+            chunksToBeDestroyed.Dequeue().DestroyChunk();
+        }
+
+        if(chunksToBeLoaded.TryPeek(out result)){
+            chunksToBeLoaded.Dequeue().InstantiateChunk();
+        }
     }
 
     

@@ -24,11 +24,12 @@ public class GameManager : MonoBehaviour
         playerManager.MovePlayer(input);
         cameraController.SetPostion(playerPos);
 
-        HashSet<Chunk> chunkSet = chunkManager.GetChunksInRadius(playerPos);
-        chunkManager.ChangeActiveChunks(chunkSet);
+        // HashSet<Chunk> chunkSet = chunkManager.GetChunksInRadius(playerPos);
+        // chunkManager.ChangeActiveChunks(chunkSet);
+        // chunkManager.LoadAndDeloadChunks();
     }
 
     void OnDrawGizmos(){
-        Gizmos.DrawWireSphere((Vector3)playerManager.GetPlayerPosition(), chunkManager.chunkCheckRadius);
+        //Gizmos.DrawWireSphere((Vector3)playerManager.GetPlayerPosition(), chunkManager.chunkCheckRadius);
     }
 }
