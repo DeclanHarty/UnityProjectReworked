@@ -8,7 +8,10 @@ public class GameManager : MonoBehaviour
     public InputManager inputManager;
     public PlayerManager playerManager;
     public ChunkManager chunkManager;
+    public TilemapManager tilemapManager;
     public CameraController cameraController;
+
+    public GridLayout gridLayout;
 
     // Start is called before the first frame update
     void Start()
@@ -20,13 +23,25 @@ public class GameManager : MonoBehaviour
     void Update()
     {
         Vector2 playerPos = playerManager.GetPlayerPosition();
-        Vector2 input = inputManager.CollectMovementKeyInput();
-        playerManager.MovePlayer(input);
+
+        Vector2 movementKeyInput = inputManager.CollectMovementKeyInput();
+        Vector2 mousePos = inputManager.CollectMousePos();
+
+        if(inputManager.isMouse1Down()){
+            Vector2 mousePosToWorld = (Vector2)Camera.main.ScreenToWorldPoint(mousePos);
+            Vector3Int mousePosToGrid = gridLayout.WorldToCell(mousePosToWorld);
+            tilemapManager.BreakTile(mousePosToGrid);
+        }
+
+        playerManager.MovePlayer(movementKeyInput);
         cameraController.SetPostion(playerPos);
 
-        HashSet<Chunk> chunkSet = chunkManager?.GetChunksInRadius(playerPos);
-        chunkManager?.ChangeActiveChunks(chunkSet);
-        chunkManager?.LoadAndDeloadChunks();
+        if(chunkManager){
+            HashSet<Chunk> chunkSet = chunkManager.GetChunksInRadius(playerPos);
+            chunkManager.ChangeActiveChunks(chunkSet);
+            chunkManager.LoadAndDeloadChunks();
+        }
+        
     }
 
     void OnDrawGizmos(){
