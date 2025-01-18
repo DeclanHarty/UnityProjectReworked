@@ -32,12 +32,12 @@ public class BezierCurve : MonoBehaviour
     }
 
 
-    Vector3 GetBezierValues(float t, Vector3[] controlPointPositions){
+    public static Vector3 GetBezierValues(float t, Vector3[] controlPointPositions){
         Vector3 curvePosition = Vector3.zero;
         Vector3[] interpolatedPositions = controlPointPositions;
 
-        for(int i = 0; i < controlPoints.Length - 1; i++){
-            Vector3[] newInterpolatedPositions = new Vector3[controlPoints.Length - 1 - i];
+        for(int i = 0; i < controlPointPositions.Length - 1; i++){
+            Vector3[] newInterpolatedPositions = new Vector3[controlPointPositions.Length - 1 - i];
             for(int interpIndex = 0; interpIndex < interpolatedPositions.Length - 1; interpIndex++){
                 newInterpolatedPositions[interpIndex] = Vector3.Lerp(interpolatedPositions[interpIndex], interpolatedPositions[interpIndex + 1], t);
             }

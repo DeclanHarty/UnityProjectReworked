@@ -53,7 +53,7 @@ public class ChunkManager : MonoBehaviour
     }
 
     public bool[] CreateMap(int width, int height, float cutoff, int CAIterations){
-        bool[] newMap = StaticNoiseGenerator.GenerateStaticBWNoise(width, height, cutoff);
+        bool[] newMap = TilemapManager.Convert2DArrayMapToArrayMap(StaticNoiseGenerator.GenerateStaticBWNoise(width, height, cutoff), width, height);
 
 
         for(int i = 0; i < CAIterations; i++){

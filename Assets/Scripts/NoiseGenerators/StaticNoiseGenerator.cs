@@ -17,13 +17,13 @@ public class StaticNoiseGenerator
         return staticNoise;
     }
 
-    public static bool[] GenerateStaticBWNoise(int width, int height, float cutoff){
-        bool[] staticNoise = new bool[width * height];
+    public static bool[,] GenerateStaticBWNoise(int width, int height, float cutoff){
+        bool[,] staticNoise = new bool[width,height];
 
         // O(width * height)
         for(int y = 0; y < height; y++){  // O(height)
             for(int x = 0; x < width; x++){ // O(width)
-                staticNoise[y * width + x] = Random.Range(0f, 1f) >= cutoff ? false : true;
+                staticNoise[x,y] = Random.Range(0f, 1f) >= cutoff ? false : true;
             }
         }
 

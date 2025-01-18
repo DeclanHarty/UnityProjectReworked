@@ -34,7 +34,7 @@ public class CAScreen : MonoBehaviour
 
     [ContextMenu("SetNoiseTexture")]
     void SetNoiseTexture(){
-        currentGrid = StaticNoiseGenerator.GenerateStaticBWNoise(width, height, cutoff);
+        currentGrid = TilemapManager.Convert2DArrayMapToArrayMap(StaticNoiseGenerator.GenerateStaticBWNoise(width, height, cutoff), width, height);
 
 
         Texture2D texture2D = GenerateBWNoiseTexture(currentGrid);

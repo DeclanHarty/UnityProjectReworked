@@ -9,12 +9,20 @@ public class LineRendererObject : MonoBehaviour
     public Vector3 startPos { set; get;}
     public Vector3 endPos { set; get;}
 
-    public void EnableLine(Vector3[] vertices, Color color){
+    public void EnableLine(Vector3[] positions, Color color){
 
         lineRenderer.startColor = color;
         lineRenderer.endColor = color;
+
+        startPos = positions[0];
+        endPos = positions[positions.Length - 1];
         
-        lineRenderer.positionCount = vertices.Length;
-        lineRenderer.SetPositions(vertices);
+        lineRenderer.positionCount = positions.Length;
+        lineRenderer.SetPositions(positions);
+    }
+
+    public void SetPositions(Vector3[] positions){
+        lineRenderer.positionCount = positions.Length;
+        lineRenderer.SetPositions(positions);
     }
 }

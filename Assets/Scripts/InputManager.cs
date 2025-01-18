@@ -13,7 +13,19 @@ public class InputManager : MonoBehaviour
         return Input.mousePosition;
     }
 
-    public bool isMouse1Down(){
+    public bool IsMouse1Down(){
         return Input.GetButtonDown("Fire1");
+    }
+
+    public bool IsMouse2Down(){
+        return Input.GetButtonDown("Fire2");
+    }
+
+    public bool IsSpacebarHeld(){
+        return Input.GetKey(KeyCode.Space);
+    }
+
+    public bool IsSpacebarPressed(){
+        return Input.GetKeyDown(KeyCode.Space);
     }
 }

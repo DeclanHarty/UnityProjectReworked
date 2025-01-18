@@ -4,13 +4,34 @@ using UnityEngine;
 
 public class PlayerManager : MonoBehaviour
 {
-    public GameObject player;
+    // Vector2 movementKeyInput;
+    // bool spacebarPressed;
+    // bool spacebarHeld;
+    // Vector2 mousePosToScreen;
 
-    public void MovePlayer(Vector2 input){
-        player.GetComponent<Movement>().Move(input);
+    public InputManager inputManager;
+    public Movement movement;
+
+    public HookController hookController;
+
+    public void UpdatePlayer(){
+        if(inputManager.IsSpacebarPressed()) movement.Jump();
+        movement.SetHooked(hookController.HookIsStuck(), hookController.GetHookPosition());
+        
+        hookController.Hook(inputManager.CollectMousePos(), GetPlayerPosition(), inputManager.IsMouse1Down(), inputManager.IsMouse2Down());
+        hookController.UpdateHook();
+    }
+
+    public void FixedUpdatePlayer(){
+        movement.Move(inputManager.CollectMovementKeyInput(), inputManager.IsSpacebarHeld());
+    }
+    
+
+    public void InjectInputManager(InputManager inputManager){
+        this.inputManager = inputManager;
     }
 
     public Vector2 GetPlayerPosition(){
-        return player.transform.position;
+        return movement.GetPlayerPosition();
     }
 }

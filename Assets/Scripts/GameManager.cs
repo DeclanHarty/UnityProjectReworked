@@ -14,27 +14,22 @@ public class GameManager : MonoBehaviour
     public GridLayout gridLayout;
 
     // Start is called before the first frame update
-    void Start()
+    void Awake()
     {
-        
+        playerManager.InjectInputManager(inputManager);
     }
 
     // Update is called once per frame
     void Update()
     {
         Vector2 playerPos = playerManager.GetPlayerPosition();
-
-        Vector2 movementKeyInput = inputManager.CollectMovementKeyInput();
-        Vector2 mousePos = inputManager.CollectMousePos();
-
-        if(inputManager.isMouse1Down()){
-            Vector2 mousePosToWorld = (Vector2)Camera.main.ScreenToWorldPoint(mousePos);
-            Vector3Int mousePosToGrid = gridLayout.WorldToCell(mousePosToWorld);
-            tilemapManager.BreakTile(mousePosToGrid);
-        }
-
-        playerManager.MovePlayer(movementKeyInput);
-        cameraController.SetPostion(playerPos);
+        // if(inputManager.isMouse1Down()){
+        //     Vector2 mousePosToWorld = (Vector2)Camera.main.ScreenToWorldPoint(mousePos);
+        //     Vector3Int mousePosToGrid = gridLayout.WorldToCell(mousePosToWorld);
+        //     tilemapManager?.BreakTile(mousePosToGrid);
+        //
+        playerManager.UpdatePlayer();
+        cameraController?.SetPostion(playerPos);
 
         if(chunkManager){
             HashSet<Chunk> chunkSet = chunkManager.GetChunksInRadius(playerPos);
@@ -42,6 +37,10 @@ public class GameManager : MonoBehaviour
             chunkManager.LoadAndDeloadChunks();
         }
         
+    }
+
+    void FixedUpdate(){
+        playerManager.FixedUpdatePlayer();
     }
 
     void OnDrawGizmos(){

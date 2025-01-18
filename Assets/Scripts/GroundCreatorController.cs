@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Security.Cryptography;
 using UnityEngine;
+using UnityEngine.Tilemaps;
 
 public class GroundCreatorController : MonoBehaviour
 {
@@ -23,7 +24,7 @@ public class GroundCreatorController : MonoBehaviour
     public GameObject worldPlaceholder;
 
     public bool[] CreateMap(){
-        map = StaticNoiseGenerator.GenerateStaticBWNoise(width, height, cutoff);
+        map = TilemapManager.Convert2DArrayMapToArrayMap(StaticNoiseGenerator.GenerateStaticBWNoise(width, height, cutoff), width, height);
 
         for(int i = 0; i < CAIterations; i++){
             map = CaveCA.RunTurn(map, width);
