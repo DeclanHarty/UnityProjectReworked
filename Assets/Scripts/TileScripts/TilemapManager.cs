@@ -68,7 +68,7 @@ public class TilemapManager : MonoBehaviour
             newMap[tile.x, tile.y] = true;
         }
 
-        Set2DMap(newMap);
+        Set2DMap(newMap, mapWidth, mapHeight);
     }
 
     public void EraseRasterizedLine(){
@@ -79,10 +79,10 @@ public class TilemapManager : MonoBehaviour
             newMap[tile.x, tile.y] = false;
         }
 
-        Set2DMap(newMap);
+        Set2DMap(newMap, mapWidth, mapHeight);
     }
 
-    public void Set2DMap(bool[,] map){
+    public void Set2DMap(bool[,] map, int mapWidth, int mapHeight){
         this.map = Convert2DArrayMapToArrayMap(map, mapWidth, mapHeight);
         List<TileBase> tileList = new List<TileBase>();
         List<Vector3Int> tilePosList = new List<Vector3Int>();
@@ -105,7 +105,7 @@ public class TilemapManager : MonoBehaviour
         for(int i = 0; i < CAIterations; i++){
             created2DArrayMap = CaveCA.Run2DTurn(created2DArrayMap, mapWidth, mapHeight);
         }
-        Set2DMap(created2DArrayMap);
+        Set2DMap(created2DArrayMap, mapWidth, mapHeight);
     }
 
     public void GenerateLayeredNoiseMap(){
@@ -116,7 +116,7 @@ public class TilemapManager : MonoBehaviour
                 created2DArrayMap = CaveCA.Run2DTurn(created2DArrayMap, mapWidth, mapHeight);
             }
         }
-        Set2DMap(created2DArrayMap);
+        Set2DMap(created2DArrayMap, mapWidth, mapHeight);
     }
 
     public void ClearMap(){
@@ -135,7 +135,7 @@ public class TilemapManager : MonoBehaviour
             }
         }
 
-        Set2DMap(newMap);
+        Set2DMap(newMap, mapWidth, mapHeight);
     }
 
     public void BreakTile(Vector3Int tilePos){
@@ -165,6 +165,7 @@ public class TilemapManager : MonoBehaviour
 
         return newMap;
     }
+
 }
 
 public enum GenerationType{
