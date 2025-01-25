@@ -19,6 +19,9 @@ public class TunnelCreator : MonoBehaviour
 
         float tunnelLength = (endPos - startPos).magnitude;
         int numOfSegments = (int)Mathf.Floor(tunnelLength/10);
+        if(numOfSegments <= 0){
+            return raster;
+        }
 
         Vector3[] controlPointVertices = NoiseySpline.CreateNoiseySplineControlPositionsWith1D_Displacement(startPos, endPos, numOfSegments, .1f, 10);
         Vector3[] baseLine = SplineCurve.CreateSpline(controlPointVertices, 2); // gets the baseline for the curve

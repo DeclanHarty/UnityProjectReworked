@@ -59,9 +59,9 @@ public class Movement : MonoBehaviour
 
     public void Move(Vector2 input, bool _jumpHeld){
         jumpHeld = _jumpHeld;
-        if(!playerHasHooked){
+        // if(!playerHasHooked){
             horizontalVelocity += movementAcceleration * Time.deltaTime * input.x;
-        }
+        // }
         
 
         bool groundCheckValue = IsGrounded();
@@ -77,14 +77,6 @@ public class Movement : MonoBehaviour
 
         if(tryingToJump){
             HandleJumpStorage();
-        }
-
-
-        
-        
-
-        if(playerHasHooked){
-            HandleHooking();
         }
 
         ApplyGravity();
@@ -158,70 +150,6 @@ public class Movement : MonoBehaviour
                 verticalVelocity -= gravity * Time.deltaTime;
             }
         }
-    }
-
-
-    public void SetHooked(bool hooked, Vector2 hookPosition){
-        if(!this.playerHasHooked && hooked){
-            this.playerHasHooked = hooked;
-            this.hookPosition = hookPosition;   
-
-            this.hookRopeLength = (GetPlayerPosition() - hookPosition).magnitude;
-            this.startingE = (GetPlayerPosition().y - (hookPosition.y - hookRopeLength)) * gravity * earlyReleaseModifier;
-            this.horizontalVelocity = 0;
-            this.verticalVelocity = 0;
-            return;
-        }
-
-        if(this.playerHasHooked && !hooked){
-            this.playerHasHooked = hooked;
-        }  
-    }
-
-    void HandleHooking(){
-        float distanceFromHook = (GetPlayerPosition() - hookPosition).magnitude;
-        Vector2 directionFromHook = (GetPlayerPosition() - hookPosition).normalized;
-        // Debug.Log(-directionFromHook);
-        Vector2 directionalHookingAcceleration = hookingAcceleration * directionFromHook;
-        Vector2 directionalMaxHookingSpeed = maxHookingSpeed * -directionFromHook;
-
-        horizontalVelocity += -directionalHookingAcceleration.x * Time.deltaTime; 
-        verticalVelocity += -directionalHookingAcceleration.y * Time.deltaTime;
-
-        if(-directionFromHook.x >= 0){
-            horizontalVelocity = Mathf.Clamp(horizontalVelocity, -directionFromHook.x * -maxHookingSpeed, -directionFromHook.x * maxHookingSpeed);
-        }else{
-            horizontalVelocity = Mathf.Clamp(horizontalVelocity, -directionFromHook.x * maxHookingSpeed, -directionFromHook.x * -maxHookingSpeed);
-        }
-
-        if(-directionFromHook.y >= 0){
-            verticalVelocity = Mathf.Clamp(verticalVelocity, -directionFromHook.y * -maxHookingSpeed, -directionFromHook.y * maxHookingSpeed);
-        }else{
-            verticalVelocity = Mathf.Clamp(verticalVelocity, -directionFromHook.y * maxHookingSpeed, -directionFromHook.y * -maxHookingSpeed);
-        }
-
-        
-        
-
-
-        // if(distanceFromHook < hookRopeLength){
-        //     return;
-        // }
-
-        // PotentialE = (GetPlayerPosition().y - (hookPosition.y - hookRopeLength)) * gravity * earlyReleaseModifier;
-        // KineticE = startingE - PotentialE;
-
-
-        // Vector2 clampedPosition = hookPosition + directionFromHook * Mathf.Min(distanceFromHook, hookRopeLength);
-        // horizontalVelocity = 0;
-        // rb.position = clampedPosition;
-        // Vector2 tangentDirection = new Vector2(-directionFromHook.y, directionFromHook.x);
-
-        // horizontalVelocity += (-directionFromHook.x * gravity * Time.deltaTime);
-        // verticalVelocity += (-directionFromHook.y * gravity * Time.deltaTime) - (gravity * Time.deltaTime);
-        // Debug.Log((-directionFromHook.y * gravity * Time.deltaTime) - (gravity * Time.deltaTime));
-
-
     }
 
 

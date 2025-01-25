@@ -150,7 +150,7 @@ public class Scanline : MonoBehaviour
 
 
         while(activeTable.Count() > 0){
-            //Debug.Log("Active Table Size : " + activeTable.Count());
+            Debug.Log("Active Table Size : " + activeTable.Count());
             for(int i = 0; i < activeTable.Count(); i+=2){
                 int endValue = (int)Mathf.Round(Mathf.Max(activeTable.ElementAt(i)[1], activeTable.ElementAt(i + 1)[1]));
                 int startValue = (int)Mathf.Round(Mathf.Min(activeTable.ElementAt(i)[1], activeTable.ElementAt(i + 1)[1]));

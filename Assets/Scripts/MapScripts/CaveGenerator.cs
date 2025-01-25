@@ -12,12 +12,12 @@ public class CaveGenerator : MonoBehaviour
     public TilemapManager tilemapManager;
 
     public const float CYCLE_TUNNEL_CHANCE = .2f;
-    public static bool[,] GenerateCaveMap(Vector2Int chunkDim, Vector2Int mapDimInChunks, int maxStartRadius, int minStartRadius, float maxRadiusChange){
+    public static bool[,] GenerateCaveMap(Vector2Int chunkDim, Vector2Int mapDimInChunks, int maxStartRadius, int minStartRadius, float maxRadiusChange, int extraRooms){
         bool[,] map = new bool[chunkDim.x * mapDimInChunks.x, chunkDim.y * mapDimInChunks.y];
 
         HashSet<Vector2> empty_tiles = new HashSet<Vector2>();
 
-        IPoint[] room_centers = new IPoint[mapDimInChunks.x * mapDimInChunks.y];
+        IPoint[] room_centers = new IPoint[mapDimInChunks.x * mapDimInChunks.y + extraRooms];
 
         // Each chunk in the map contains one 'room'
         // This loops through each chunk and creates the room for that chunk
@@ -29,7 +29,7 @@ public class CaveGenerator : MonoBehaviour
                 float noisePos = Random.Range(0f, 100f);
 
                 // gets the position of the room
-                Vector2 pos = new Vector2(chunkDim.x * x, chunkDim.y * y) + new Vector2(Random.Range(Mathf.CeilToInt(maxStartRadius * (1 + maxRadiusChange) + 1), Mathf.FloorToInt(chunkDim.x - maxStartRadius * (1 + maxRadiusChange) - 1)), Random.Range(Mathf.CeilToInt(maxStartRadius * (1 + maxRadiusChange) + 1), Mathf.FloorToInt(chunkDim.y - maxStartRadius * (1 + maxRadiusChange) - 1)));
+                Vector2 pos = new Vector2(chunkDim.x * x, chunkDim.y * y) + new Vector2(Random.Range(Mathf.CeilToInt(maxStartRadius * (1 + maxRadiusChange / 2) + 1), Mathf.FloorToInt(chunkDim.x - maxStartRadius * (1 + maxRadiusChange / 2) - 1)), Random.Range(Mathf.CeilToInt(maxStartRadius * (1 + maxRadiusChange / 2) + 1), Mathf.FloorToInt(chunkDim.y - maxStartRadius * (1 + maxRadiusChange / 2) - 1)));
 
                 // Adds Room to list of room centers for calculating cave tunnels
                 room_centers[y * mapDimInChunks.x + x] = new Point(pos.x, pos.y);
@@ -45,6 +45,29 @@ public class CaveGenerator : MonoBehaviour
                     empty_tiles.Add(new Vector2(tile.x, tile.y)); 
                 }                                                    
             }
+        }
+
+        // Adds extra rooms to the cave
+        for(int i = 0; i < extraRooms; i++){
+            float radius = Random.Range(minStartRadius, maxStartRadius);
+                // Finds the position for the Perlin Noise
+                float noisePos = Random.Range(0f, 100f);
+
+                // gets the position of the room
+                Vector2 pos = new Vector2(Random.Range(Mathf.CeilToInt(maxStartRadius * (1 + maxRadiusChange / 2) + 1), Mathf.FloorToInt(chunkDim.x * mapDimInChunks.x - maxStartRadius * (1 + maxRadiusChange / 2) - 1)), Random.Range(Mathf.CeilToInt(maxStartRadius * (1 + maxRadiusChange / 2) + 1), Mathf.FloorToInt(chunkDim.y * mapDimInChunks.y - maxStartRadius * (1 + maxRadiusChange / 2) - 1)));
+                // Adds Room to list of room centers for calculating cave tunnels
+                room_centers[mapDimInChunks.y * mapDimInChunks.x + i] = new Point(pos.x, pos.y);
+
+                // Calculates the vertices of the circle to be sent to the scanline algotrithm for getting the infill of the room
+                Vector2[] circlePoints = NoiseyCircle.CreateNoiseyCircle(radius, maxRadiusChange, noisePos, 2f, 28, pos);
+                Vector2Int[] roundedPoints = Scanline.ConvertFloatPolygonToIntPolygon(circlePoints);
+                List<Vector2> tiles = Scanline.PolygonFill(roundedPoints);
+                Vector2Int[] roundedTiles = Scanline.ConvertFloatPolygonToIntPolygon(tiles.ToArray());
+
+                // Adds the determined air tiles to the emptytiles set
+                foreach(Vector2Int tile in roundedTiles){
+                    empty_tiles.Add(new Vector2(tile.x, tile.y)); 
+                }                                                    
         }
 
         // Generate Delaunator
@@ -119,9 +142,10 @@ public class CaveGenerator : MonoBehaviour
     }  
     [ContextMenu("Create Cave")]
     public void SetMap(){
-        bool[,] map = GenerateCaveMap(new Vector2Int(50, 50), new Vector2Int(5,3), 15, 10, .2f);
-        tilemapManager.Set2DMap(map, 250, 150);
-
+        Vector2Int chunkDim = new Vector2Int(75, 75);
+        Vector2Int mapDimInChunks = new Vector2Int(5,3);
+        bool[,] map = GenerateCaveMap(chunkDim, mapDimInChunks, 20, 10, .4f, 3);
+        tilemapManager.Set2DMap(map, chunkDim.x * mapDimInChunks.x, chunkDim.y * mapDimInChunks.y);
     }
 
 }

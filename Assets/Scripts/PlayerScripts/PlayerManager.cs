@@ -16,10 +16,6 @@ public class PlayerManager : MonoBehaviour
 
     public void UpdatePlayer(){
         if(inputManager.IsSpacebarPressed()) movement.Jump();
-        movement.SetHooked(hookController.HookIsStuck(), hookController.GetHookPosition());
-        
-        hookController.Hook(inputManager.CollectMousePos(), GetPlayerPosition(), inputManager.IsMouse1Down(), inputManager.IsMouse2Down());
-        hookController.UpdateHook();
     }
 
     public void FixedUpdatePlayer(){
