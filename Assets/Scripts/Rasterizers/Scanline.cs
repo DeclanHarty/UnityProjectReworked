@@ -145,10 +145,8 @@ public class Scanline : MonoBehaviour
         // }
 
         int scanline_y = (int)Mathf.Round(globalTable.ElementAt(0)[0]);
-        int iteration = 0;
         UpdateScanline(scanline_y, ref globalTable, ref activeTable);
-
-
+        
         while(activeTable.Count() > 0){
             Debug.Log("Active Table Size : " + activeTable.Count());
             for(int i = 0; i < activeTable.Count(); i+=2){

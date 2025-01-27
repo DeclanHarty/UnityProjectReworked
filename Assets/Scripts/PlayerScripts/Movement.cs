@@ -103,7 +103,6 @@ public class Movement : MonoBehaviour
         verticalVelocity = Mathf.Max(verticalVelocity, -maxFallingSpeed);
 
         if(HasBonked()){
-            Debug.Log("Bonked");
             HandleBonk();
         }
 
