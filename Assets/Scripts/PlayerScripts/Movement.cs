@@ -5,13 +5,23 @@ using UnityEngine;
 
 public class Movement : MonoBehaviour
 {
-    public float speed;
+    [Header("Moving")]
     public float movementAcceleration;
     public float maxSpeed;
-    public bool isGrounded = true;
-
     public float groundedFriction;
+    public float airborneFrictionMultiplier;
     public float frictionCutoff;
+    // 1 means facing right, -1 means facing left
+    public int playerDirection;
+    //
+    public bool switchingDirection;
+
+    [Header("Check Values")]
+    public bool isGrounded = true;
+    public bool touchingWall;
+    public bool touchingLedge;
+
+    public float ledgeHeight;
 
     [Header("Gravity")]
     public float gravity;
@@ -28,33 +38,21 @@ public class Movement : MonoBehaviour
     [Min(0)]
     public float coyoteTime;
 
-    [Header("JumpBuffer")]
+    [Header("Jump Buffer")]
     private float timeSinceJumpPressed;
     [Min(0)]
     public float jumpBuffer;
     public bool tryingToJump;
 
-    [Header("Hook States")]
-    private bool playerHasHooked;
-    public Vector2 hookPosition;
-    public float hookRopeLength;
-    public Vector2 hookVelocity;
-
-    public float maxHookingSpeed;
-    public float hookingAcceleration;
-
     [Header("Current Velocities")]
     public float verticalVelocity;
     public float horizontalVelocity;
 
-    [Header("Hook Energies")]
-    public float startingE;
-    public float PotentialE;
-    public float KineticE;
-
     [Header("Object References")]
-    public GroundCheck groundCheck;
-    public BonkCheck bonkCheck;
+    public CheckCast groundCheck;
+    public CheckCast bonkCheck;
+    public CheckCast wallCheck;
+    public CheckCast stepupCheck;
     public Rigidbody2D rb;
 
     public void Move(Vector2 input, bool _jumpHeld){
@@ -62,18 +60,40 @@ public class Movement : MonoBehaviour
         // if(!playerHasHooked){
             horizontalVelocity += movementAcceleration * Time.deltaTime * input.x;
         // }
+
+        if(input.x != 0){
+            int newDirection = Math.Sign(input.x);
+            if(newDirection != playerDirection){
+                playerDirection = newDirection;
+                switchingDirection = true;
+            }
+            
+        }
         
 
         bool groundCheckValue = IsGrounded();
         HandleGrounding(groundCheckValue);
 
-        if(isGrounded && horizontalVelocity != 0 && (input.x == 0 || Mathf.Sign(input.x) != Mathf.Sign(horizontalVelocity))){
-            horizontalVelocity += groundedFriction * -1 * Mathf.Sign(horizontalVelocity) * Time.deltaTime;
-            if(Mathf.Abs(horizontalVelocity) < frictionCutoff){
-                horizontalVelocity = 0;
+        touchingWall = TouchingWall();
+        touchingLedge = TouchingLedge();
+
+        if(!touchingWall){
+            if(horizontalVelocity != 0 && (input.x == 0 || Mathf.Sign(input.x) != Mathf.Sign(horizontalVelocity))){
+                float frictionEffect = groundedFriction * -1 * Mathf.Sign(horizontalVelocity) * Mathf.Abs(horizontalVelocity) * Time.deltaTime;
+                if(!isGrounded){
+                    frictionEffect *= airborneFrictionMultiplier;   
+                }
+                horizontalVelocity += frictionEffect;
+                if(Mathf.Abs(horizontalVelocity) < frictionCutoff){
+                    horizontalVelocity = 0;
+                }
             }
+            horizontalVelocity = Mathf.Clamp(horizontalVelocity, -maxSpeed, maxSpeed);
         }
-        horizontalVelocity = Mathf.Clamp(horizontalVelocity, -maxSpeed, maxSpeed);
+
+        if(touchingWall || (!isGrounded && touchingLedge)){
+            horizontalVelocity = 0;
+        }
 
         if(tryingToJump){
             HandleJumpStorage();
@@ -86,13 +106,27 @@ public class Movement : MonoBehaviour
             Debug.Log("Bonked");
             HandleBonk();
         }
+
+        if(isGrounded && touchingLedge && !touchingWall && input.x != 0 && !switchingDirection){
+            rb.MovePosition(new Vector2(rb.position.x + .1f * (float)playerDirection, rb.position.y + ledgeHeight));
+        }
         
 
         rb.velocity = new Vector2(horizontalVelocity, verticalVelocity);
     }
-
     public void Jump(){
         if(isGrounded || timeSinceLeftGround < coyoteTime){
+            timeSinceLeftGround += coyoteTime;
+            verticalVelocity = jumpVelocity;
+            tryingToJump = false;
+        }else{
+            tryingToJump = true;
+            timeSinceJumpPressed = 0;
+        }
+    }
+
+    public void Jump(bool ignoreGround){
+        if(ignoreGround || isGrounded || timeSinceLeftGround < coyoteTime){
             timeSinceLeftGround += coyoteTime;
             verticalVelocity = jumpVelocity;
             tryingToJump = false;
@@ -108,6 +142,14 @@ public class Movement : MonoBehaviour
 
     private bool IsGrounded(){
         return groundCheck.IsObjectInCast();
+    }
+
+    private bool TouchingWall(){
+        return wallCheck.IsObjectInCast();
+    }
+
+    private bool TouchingLedge(){
+        return stepupCheck.IsObjectInCast();
     }
 
     private void HandleGrounding(bool groundCheckValue){
@@ -140,10 +182,9 @@ public class Movement : MonoBehaviour
     }
 
     private void ApplyGravity(){
-        if (!isGrounded && !playerHasHooked) { 
+        if (!isGrounded) { 
             if(verticalVelocity > -maxFallingSpeed){
                 if(!jumpHeld || verticalVelocity <= 0){
-                    
                     verticalVelocity -= gravity * earlyReleaseModifier * Time.deltaTime;
                     return;
                 }
@@ -152,11 +193,26 @@ public class Movement : MonoBehaviour
         }
     }
 
-
-
+    public   void SwitchedDirection(){
+        switchingDirection = false;
+    }
 
     public Vector2 GetPlayerPosition(){
         return transform.position;
+    }
+
+    public int GetPlayerDirection(){
+        return playerDirection;
+    }
+
+    public bool IsSwitchingDirection(){
+        return switchingDirection;
+    }
+
+    public void ClearVelocity(){
+        horizontalVelocity = 0;
+        verticalVelocity = 0;
+        rb.velocity = Vector2.zero;
     }
 
 }

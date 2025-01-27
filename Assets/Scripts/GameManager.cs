@@ -17,6 +17,7 @@ public class GameManager : MonoBehaviour
     void Awake()
     {
         playerManager.InjectInputManager(inputManager);
+        playerManager.SwitchState(new FreeMovement());
     }
 
     // Update is called once per frame
@@ -29,7 +30,7 @@ public class GameManager : MonoBehaviour
         //     tilemapManager?.BreakTile(mousePosToGrid);
         //
         playerManager.UpdatePlayer();
-        cameraController?.SetPostion(playerPos);
+        cameraController?.MoveCamera(playerPos);
 
         if(chunkManager){
             HashSet<Chunk> chunkSet = chunkManager.GetChunksInRadius(playerPos);

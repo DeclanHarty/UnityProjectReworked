@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 
 public class PlayerManager : MonoBehaviour
@@ -11,17 +12,20 @@ public class PlayerManager : MonoBehaviour
 
     public InputManager inputManager;
     public Movement movement;
-
     public HookController hookController;
+    public PlayerObjectController playerObjectController;
+
+    // Change this to a proper State and Strategy System
+    public PlayerState playerState;
 
     public void UpdatePlayer(){
-        if(inputManager.IsSpacebarPressed()) movement.Jump();
+        playerState.StateUpdate();
+        
     }
 
     public void FixedUpdatePlayer(){
-        movement.Move(inputManager.CollectMovementKeyInput(), inputManager.IsSpacebarHeld());
+        playerState.StateFixedUpdate();
     }
-    
 
     public void InjectInputManager(InputManager inputManager){
         this.inputManager = inputManager;
@@ -29,5 +33,12 @@ public class PlayerManager : MonoBehaviour
 
     public Vector2 GetPlayerPosition(){
         return movement.GetPlayerPosition();
+    }
+
+
+    public void SwitchState(PlayerState newState){
+        this.playerState = newState;
+        this.playerState.InjectPlayerManager(this);
+        this.playerState.OnStateChange();
     }
 }

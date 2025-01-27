@@ -4,42 +4,45 @@ using UnityEngine;
 
 public class HookController : MonoBehaviour
 {
-    public GrapplingHookBehavior grapplingHookBehavior;
-    private float timeMouse1Held;
+    public float maxHookDistance;
+    public float hookingSpeed;
+    public bool playerReachedHook;
+    
+    public LayerMask layerMask;
 
-    public bool hookIsOut;
+    public bool hooked;
+    public Vector2 hookPosition;
 
-    public void UpdateHook(){
-        grapplingHookBehavior.UpdateHook();
-        
-    }
+    public Rigidbody2D rb;
 
-    public void Hook(Vector2 mouseScreenPos, Vector2 playerPos, bool mouse1Pressed, bool mouse2Pressed){
-        Vector2 mouseWorldPoint = Camera.main.ScreenToWorldPoint(mouseScreenPos);
-        Vector2 direction = (mouseWorldPoint - playerPos).normalized;
 
-        if(mouse1Pressed && !hookIsOut){
-            grapplingHookBehavior.ActivateAndDirect(direction, 1);
-            hookIsOut = true;
-        } 
-
-        if(mouse2Pressed && hookIsOut){
-            ResetHook();
+    public bool ThrowOutHook(Vector2 direction){
+        RaycastHit2D hit = Physics2D.Raycast(transform.position, direction, maxHookDistance, layerMask);
+        if(hit){
+            hooked = true;
+            hookPosition = hit.point;
+            return true;
+        }else{
+            hooked = false;
+            hookPosition = Vector2.zero;
+            return false;
         }
-
     }
 
-    public void ResetHook(){
-        hookIsOut = false;
-        grapplingHookBehavior.ResetHook();
+    public void MoveTowardsHook(){
+        rb.velocity = GetHookDirection() * hookingSpeed;
     }
 
-    public bool HookIsStuck(){
-        return grapplingHookBehavior.isStuck;
+    public void ReleaseHook(){
+        hooked = false;
     }
 
-    public Vector2 GetHookPosition(){
-        return grapplingHookBehavior.GetHookPosition();
+    public void OnDrawGizmos(){
+        if(hooked) Gizmos.DrawWireSphere(hookPosition, .1f);
+    }
+
+    public Vector2 GetHookDirection(){
+        return (hookPosition - (Vector2)transform.position).normalized;
     }
 }
 
