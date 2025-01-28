@@ -352,8 +352,9 @@ GameObject:
   - component: {fileID: 8065859327279245197}
   - component: {fileID: 8065859327279245196}
   - component: {fileID: 4694652046405932267}
-  - component: {fileID: 8065859327279245199}
   - component: {fileID: 5997117734846715740}
+  - component: {fileID: 5889621503039981066}
+  - component: {fileID: 8065859327279245199}
   - component: {fileID: 7369532553040077321}
   m_Layer: 0
   m_Name: Player
@@ -433,6 +434,40 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   horizontalScale: 0
+--- !u!114 &5997117734846715740
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8065859327279245198}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9d98d2064c642c346a3eabfde3ce8402, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  maxHookDistance: 0
+  hookingSpeed: 0
+  playerReachedHook: 0
+  layerMask:
+    serializedVersion: 2
+    m_Bits: 0
+  hooked: 0
+  hookPosition: {x: 0, y: 0}
+  rb: {fileID: 0}
+--- !u!114 &5889621503039981066
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8065859327279245198}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6d45329262e3a364db257293b9220ce9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  heldItem: {fileID: 0}
 --- !u!50 &8065859327279245199
 Rigidbody2D:
   serializedVersion: 4
@@ -454,23 +489,6 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 1
   m_Constraints: 4
---- !u!114 &5997117734846715740
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8065859327279245198}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9d98d2064c642c346a3eabfde3ce8402, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  playerReachedHook: 0
-  maxHookDistance: 0
-  layerMask:
-    serializedVersion: 2
-    m_Bits: 0
 --- !u!70 &7369532553040077321
 CapsuleCollider2D:
   m_ObjectHideFlags: 0

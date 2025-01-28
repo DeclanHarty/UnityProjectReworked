@@ -14,9 +14,15 @@ public class PlayerManager : MonoBehaviour
     public Movement movement;
     public HookController hookController;
     public PlayerObjectController playerObjectController;
+    public HeldItemController heldItemController;
 
     // Change this to a proper State and Strategy System
     public PlayerState playerState;
+
+    void Awake()
+    {
+        heldItemController.SetItem(new Gun());
+    }
 
     public void UpdatePlayer(){
         playerState.StateUpdate();

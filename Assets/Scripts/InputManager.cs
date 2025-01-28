@@ -21,6 +21,10 @@ public class InputManager : MonoBehaviour
         return Input.GetButtonDown("Fire2");
     }
 
+    public bool EPressed(){
+        return Input.GetKeyDown(KeyCode.E);
+    }
+
     public bool IsSpacebarHeld(){
         return Input.GetKey(KeyCode.Space);
     }
