@@ -16,6 +16,9 @@ public class PlayerHooked : PlayerState
 
     public override void StateUpdate()
     {
+        Vector2 mouseDirection = GetMouseDirection();
+        Vector2 mousePosInWorld = playerManager.inputManager.CollectMousePos();
+
         if(playerManager.inputManager.IsMouse2Down()){
             playerManager.hookController.ReleaseHook();
             playerManager.SwitchState(new FreeMovement());
@@ -28,5 +31,7 @@ public class PlayerHooked : PlayerState
             playerManager.movement.Jump(true);
             return;
         }
+
+        if(playerManager.inputManager.IsMouse1Down()) playerManager.heldItemController.OnFire1(mousePosInWorld, mouseDirection);
     }
 }

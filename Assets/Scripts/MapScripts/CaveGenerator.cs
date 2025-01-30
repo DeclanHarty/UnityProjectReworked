@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -6,6 +7,7 @@ using DelaunatorSharp.Unity.Extensions;
 using Unity.VisualScripting;
 using UnityEditor;
 using UnityEngine;
+
 
 public class CaveGenerator : MonoBehaviour
 {
@@ -19,17 +21,20 @@ public class CaveGenerator : MonoBehaviour
 
         IPoint[] room_centers = new IPoint[mapDimInChunks.x * mapDimInChunks.y + extraRooms];
 
+        // Start time for testing
+        DateTime before = DateTime.Now;
+
         // Each chunk in the map contains one 'room'
         // This loops through each chunk and creates the room for that chunk
         for(int y = 0; y < mapDimInChunks.y; y++){
             for(int x = 0; x < mapDimInChunks.x; x++){
                 // Determines the starting radius of the base circle for the room
-                float radius = Random.Range(minStartRadius, maxStartRadius);
+                float radius = UnityEngine.Random.Range(minStartRadius, maxStartRadius);
                 // Finds the position for the Perlin Noise
-                float noisePos = Random.Range(0f, 100f);
+                float noisePos = UnityEngine.Random.Range(0f, 100f);
 
                 // gets the position of the room
-                Vector2 pos = new Vector2(chunkDim.x * x, chunkDim.y * y) + new Vector2(Random.Range(Mathf.CeilToInt(maxStartRadius * (1 + maxRadiusChange / 2) + 1), Mathf.FloorToInt(chunkDim.x - maxStartRadius * (1 + maxRadiusChange / 2) - 1)), Random.Range(Mathf.CeilToInt(maxStartRadius * (1 + maxRadiusChange / 2) + 1), Mathf.FloorToInt(chunkDim.y - maxStartRadius * (1 + maxRadiusChange / 2) - 1)));
+                Vector2 pos = new Vector2(chunkDim.x * x, chunkDim.y * y) + new Vector2(UnityEngine.Random.Range(Mathf.CeilToInt(maxStartRadius * (1 + maxRadiusChange / 2) + 1), Mathf.FloorToInt(chunkDim.x - maxStartRadius * (1 + maxRadiusChange / 2) - 1)), UnityEngine.Random.Range(Mathf.CeilToInt(maxStartRadius * (1 + maxRadiusChange / 2) + 1), Mathf.FloorToInt(chunkDim.y - maxStartRadius * (1 + maxRadiusChange / 2) - 1)));
 
                 // Adds Room to list of room centers for calculating cave tunnels
                 room_centers[y * mapDimInChunks.x + x] = new Point(pos.x, pos.y);
@@ -49,12 +54,12 @@ public class CaveGenerator : MonoBehaviour
 
         // Adds extra rooms to the cave
         for(int i = 0; i < extraRooms; i++){
-            float radius = Random.Range(minStartRadius, maxStartRadius);
+            float radius = UnityEngine.Random.Range(minStartRadius, maxStartRadius);
                 // Finds the position for the Perlin Noise
-                float noisePos = Random.Range(0f, 100f);
+                float noisePos = UnityEngine.Random.Range(0f, 100f);
 
                 // gets the position of the room
-                Vector2 pos = new Vector2(Random.Range(Mathf.CeilToInt(maxStartRadius * (1 + maxRadiusChange / 2) + 1), Mathf.FloorToInt(chunkDim.x * mapDimInChunks.x - maxStartRadius * (1 + maxRadiusChange / 2) - 1)), Random.Range(Mathf.CeilToInt(maxStartRadius * (1 + maxRadiusChange / 2) + 1), Mathf.FloorToInt(chunkDim.y * mapDimInChunks.y - maxStartRadius * (1 + maxRadiusChange / 2) - 1)));
+                Vector2 pos = new Vector2(UnityEngine.Random.Range(Mathf.CeilToInt(maxStartRadius * (1 + maxRadiusChange / 2) + 1), Mathf.FloorToInt(chunkDim.x * mapDimInChunks.x - maxStartRadius * (1 + maxRadiusChange / 2) - 1)), UnityEngine.Random.Range(Mathf.CeilToInt(maxStartRadius * (1 + maxRadiusChange / 2) + 1), Mathf.FloorToInt(chunkDim.y * mapDimInChunks.y - maxStartRadius * (1 + maxRadiusChange / 2) - 1)));
                 // Adds Room to list of room centers for calculating cave tunnels
                 room_centers[mapDimInChunks.y * mapDimInChunks.x + i] = new Point(pos.x, pos.y);
 
@@ -105,7 +110,7 @@ public class CaveGenerator : MonoBehaviour
             for(int y = 0; y < mst.GetLength(1); y++){
                 if(adjacencyGraph[x,y] != 0 && !createdTunnels.Contains(new Vector2Int(x,y))){
                     // Determine if cycle tunnel is a success
-                    if(Random.Range(0f,1f) < CYCLE_TUNNEL_CHANCE){
+                    if(UnityEngine.Random.Range(0f,1f) < CYCLE_TUNNEL_CHANCE){
                         //Create The Tunnel
                         List<Vector2> raster = TunnelCreator.TunnelRaster(room_centers[x].ToVector2(), room_centers[y].ToVector2(), 5);
                         Vector2Int[] roundedTiles = Scanline.ConvertFloatPolygonToIntPolygon(raster.ToArray());
@@ -133,6 +138,12 @@ public class CaveGenerator : MonoBehaviour
             }
         }
 
+        UnweighetedAdjacencyList<Vector2Int> navGraph = CreateNavGraph(empty_tiles.ToList());
+
+        DateTime after = DateTime.Now;
+        TimeSpan duration = after.Subtract(before);
+        Debug.Log("Duration in milliseconds: " + duration.Milliseconds);
+
         return map;
     }  
 
@@ -144,20 +155,28 @@ public class CaveGenerator : MonoBehaviour
         tilemapManager.Set2DMap(map, chunkDim.x * mapDimInChunks.x, chunkDim.y * mapDimInChunks.y);
     }
 
-    public UnweighetedAdjacencyList<Vector2Int> CreateNavGraph(HashSet<Vector2Int> emptyTiles){
+    public static UnweighetedAdjacencyList<Vector2Int> CreateNavGraph(List<Vector2Int> emptyTiles){
+        
+        DateTime before = DateTime.Now;
         UnweighetedAdjacencyList<Vector2Int> navGraph = new UnweighetedAdjacencyList<Vector2Int>();
-        foreach(Vector2Int tile in emptyTiles){
-            UnweighetedAdjacencyListNode<Vector2Int> node = new UnweighetedAdjacencyListNode<Vector2Int>(tile, new List<Vector2Int>());
+        for(int i = 0; i < emptyTiles.Count(); i++){
+            List<Vector2Int> neighbors = new List<Vector2Int>();
+            Vector2Int tile = emptyTiles.ElementAt(i);
+
             for(int y = tile.y - 1; y <= tile.y + 1; y++){
-                for(int x = tile.x - 1; y <= tile.x + 1; x++){
-                    if(!(x == tile.x || y == tile.y) && emptyTiles.Contains(new Vector2Int(x, y))){
-                        node.AddNeighbor(new Vector2Int(x,y));
+                for(int x = tile.x - 1; x <= tile.x + 1; x++){
+                    if(!(x == emptyTiles.ElementAt(i).x || y == emptyTiles.ElementAt(i).y) && emptyTiles.Contains(new Vector2Int())){
+                       neighbors.Add(new Vector2Int(x,y));
                     }
                 }
             }
+            UnweighetedAdjacencyListNode<Vector2Int> node = new UnweighetedAdjacencyListNode<Vector2Int>(emptyTiles.ElementAt(i), neighbors);
             navGraph.AddNode(node);
         }
 
+        DateTime after = DateTime.Now;
+        TimeSpan duration = after.Subtract(before);
+        Debug.Log("NavGraph Duration in milliseconds: " + duration.Milliseconds);
         return navGraph;
     }
 

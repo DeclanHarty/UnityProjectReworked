@@ -16,11 +16,8 @@ public class FreeMovement : PlayerState
 
     public override void StateUpdate()
     {
-        Vector2 mousePos = playerManager.inputManager.CollectMousePos();
-        Vector2 mousePosInWorld = Camera.main.ScreenToWorldPoint(mousePos);
-
-        Vector2 playerMouseDifference = mousePosInWorld - playerManager.movement.GetPlayerPosition();
-        Vector2 mouseDirection = playerMouseDifference.normalized;
+        Vector2 mouseDirection = GetMouseDirection();
+        Vector2 mousePosInWorld = playerManager.inputManager.CollectMousePos();
 
         if(playerManager.inputManager.IsSpacebarPressed()) playerManager.movement.Jump();
 

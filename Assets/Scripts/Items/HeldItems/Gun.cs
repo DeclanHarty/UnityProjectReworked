@@ -7,9 +7,9 @@ using UnityEngine;
 public class Gun : HeldItem
 {
     public int damage = 4;
-
     public int number_pellets = 6;
     public float max_angle_of_spread = 10;
+    public float max_distance = 5;
 
     public override void Fire1Action()
     {
@@ -27,7 +27,7 @@ public class Gun : HeldItem
                 
             }
 
-            RaycastHit2D hit = Physics2D.Raycast(currentPosition, Quaternion.AngleAxis(bullet_angle, Vector3.forward) * mouseDirection, 10, LayerMask.GetMask(new string[] {"Ground","Enemy"}));
+            RaycastHit2D hit = Physics2D.Raycast(currentPosition, Quaternion.AngleAxis(bullet_angle, Vector3.forward) * mouseDirection, max_distance, LayerMask.GetMask(new string[] {"Ground","Enemy"}));
             if(hit){
                 if(hit.collider.gameObject.layer == 8){
                     hit.collider.gameObject.GetComponent<Enemy>().TakeDamage(damage);
