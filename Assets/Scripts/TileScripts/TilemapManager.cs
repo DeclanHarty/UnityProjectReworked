@@ -1,5 +1,7 @@
+using System;
 using System.Collections.Generic;
 using Unity.Mathematics;
+using Unity.PlasticSCM.Editor.WebApi;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Tilemaps;
@@ -39,6 +41,12 @@ public class TilemapManager : MonoBehaviour
     public Vector2Int lineEndPos;
 
     public GenerationType generationType;
+
+    [Header("NavGraph")]
+    public NavGraph navGraph;
+    public Vector2Int testStartPos;
+    public Vector2Int testEndPos;
+
 
     public bool[,] CreateLayeredNoiseMap(){
         return LayeredPerlinNoiseGenerator.GenerateBWFractalNoise(mapWidth, mapHeight, startSamplePos, cutoff, scale, octaves, persistence, lacunarity);
@@ -98,6 +106,18 @@ public class TilemapManager : MonoBehaviour
         
         tilemap.SetTiles(tilePosList.ToArray(), tileList.ToArray());
     }
+
+    public void SetNavGraph(UnweighetedAdjacencyList<Vector2Int> navGraph){
+        //this.navGraph = navGraph;
+    
+    }
+
+    [ContextMenu("Test A Star")]
+    public void TestAStar(/*Vector2Int startPos, Vector2Int endPos */){
+        List<Vector2Int> list = AStar<Vector2Int>.UWAStarPath(testStartPos, testEndPos, AStar<Vector2Int>.DirectDistanceHeuristic, navGraph.GetNavGraph());
+    }
+
+
 
     public void GenerateRandomCellularAutomataMap(){
         ClearMap();
@@ -164,6 +184,28 @@ public class TilemapManager : MonoBehaviour
         }
 
         return newMap;
+    }
+
+    public List<Vector2Int> GetAStarPoints(Vector2 start, Vector2 end){
+        Vector3Int startCell3 = tilemap.WorldToCell(start);
+        Vector2Int startCell = new Vector2Int(startCell3.x, startCell3.y);
+
+        Debug.Log(startCell);
+
+        Vector3Int endCell3 = tilemap.WorldToCell(end);
+        Vector2Int endCell = new Vector2Int(endCell3.x, endCell3.y);
+
+        
+        UnweighetedAdjacencyList<Vector2Int> graph = navGraph.GetNavGraph();
+        Debug.Log(graph.Count());
+
+        List<Vector2Int> cellList = AStar<Vector2Int>.UWAStarPath(startCell, endCell, AStar<Vector2Int>.DirectDistanceHeuristic, graph);
+        List<Vector2Int> posList = new List<Vector2Int>();
+        foreach(Vector2Int cell in cellList){
+            Vector3 pos3 = tilemap.CellToWorld((Vector3Int)cell);
+            posList.Add(new Vector2Int((int)Math.Floor(pos3.x), (int)Math.Floor(pos3.x)));
+        }
+        return posList;
     }
 
 }

@@ -140,10 +140,6 @@ public class TunnelCreator : MonoBehaviour
 
         intersectIndex.Add(line.Length - 1);
 
-        foreach(int index in intersectIndex){
-            Debug.Log(index);
-        }
-
 
         for(int i = 0; i + 1 < intersectIndex.Count; i+=2){
             int startIndex = intersectIndex.ElementAt(i);
@@ -176,9 +172,6 @@ public class TunnelCreator : MonoBehaviour
         }else{
             valid_t = top_value_t > 0 && top_value_t < bottom_value_t;
         }
-
-        Debug.Log(top_value_t/bottom_value_t);
-        Debug.Log(top_value_u/bottom_value_u);
 
         if(bottom_value_u < 0){
             valid_u = top_value_u < 0 && top_value_u > bottom_value_u;

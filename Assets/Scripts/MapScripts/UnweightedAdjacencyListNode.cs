@@ -2,16 +2,16 @@ using System.Collections.Generic;
 using UnityEditor.Experimental.GraphView;
 
 public class UnweighetedAdjacencyListNode<T> {
-    private T node;
+    private T value;
     private List<T> neighbors;
     
-    public UnweighetedAdjacencyListNode(T node, List<T> neighbors){
-        this.node = node;
+    public UnweighetedAdjacencyListNode(T value, List<T> neighbors){
+        this.value = value;
         this.neighbors = neighbors;
     }
 
-    public T GetNode(){
-        return node;
+    public T GetValue(){
+        return value;
     }
 
     public List<T> GetNeighbors(){
