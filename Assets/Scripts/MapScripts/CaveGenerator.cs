@@ -19,7 +19,6 @@ public class CaveGenerator : MonoBehaviour
     public static bool[,] GenerateCaveMap(Vector2Int chunkDim, Vector2Int mapDimInChunks, int maxStartRadius, int minStartRadius, float maxRadiusChange, int extraRooms){
         bool[,] map = new bool[chunkDim.x * mapDimInChunks.x, chunkDim.y * mapDimInChunks.y];
 
-        Debug.Log("1");
         for(int x = 0; x < map.GetLength(0); x++){
             for(int y = 0; y < map.GetLength(1); y++){
                 map[x,y] = true;
@@ -34,7 +33,6 @@ public class CaveGenerator : MonoBehaviour
 
         // Each chunk in the map contains one 'room'
         // This loops through each chunk and creates the room for that chunk
-        Debug.Log("2");
         for(int y = 0; y < mapDimInChunks.y; y++){
             for(int x = 0; x < mapDimInChunks.x; x++){
                 // Determines the starting radius of the base circle for the room
@@ -62,7 +60,6 @@ public class CaveGenerator : MonoBehaviour
         }
 
         // Adds extra rooms to the cave
-        Debug.Log("3");
         for(int i = 0; i < extraRooms; i++){
             float radius = UnityEngine.Random.Range(minStartRadius, maxStartRadius);
                 // Finds the position for the Perlin Noise
@@ -97,7 +94,6 @@ public class CaveGenerator : MonoBehaviour
         HashSet<Vector2Int> createdTunnels = new HashSet<Vector2Int>();
 
         // Generate the MST Tunnels
-        Debug.Log("4");
         for(int x = 0; x < mst.GetLength(0); x++){
             for(int y = 0; y < mst.GetLength(1); y++){
                 if(mst[x,y] != 0 && !createdTunnels.Contains(new Vector2Int(x,y))){
@@ -117,7 +113,6 @@ public class CaveGenerator : MonoBehaviour
         }
 
         // Add the extra cycling tunnels
-        Debug.Log("5");
         for(int x = 0; x < mst.GetLength(0); x++){
             for(int y = 0; y < mst.GetLength(1); y++){
                 if(adjacencyGraph[x,y] != 0 && !createdTunnels.Contains(new Vector2Int(x,y))){
@@ -180,9 +175,10 @@ public class CaveGenerator : MonoBehaviour
         
         DateTime before = DateTime.Now;
         UnweighetedAdjacencyList<Vector2Int> navGraph = new UnweighetedAdjacencyList<Vector2Int>();
-        Debug.Log("6");
-        for(int x = 0; x < map.GetLength(0); x++){
-            for(int y = 0; y < map.GetLength(1); y++){
+        int width = map.GetLength(0);
+        int height = map.GetLength(1);
+        for(int x = 0; x < width; x++){
+            for(int y = 0; y < height; y++){
                 List<Vector2Int> neighbors = new List<Vector2Int>();
 
                 // for(int y = tile.y - 1; y <= tile.y + 1; y++){
@@ -207,7 +203,6 @@ public class CaveGenerator : MonoBehaviour
     }
 
     public static void AddValidNeighbors(Vector2Int tilePos, bool[,] map, List<Vector2Int> neighbors){
-        Debug.Log("7");
         for(int y = tilePos.y - 1; y <= tilePos.y + 1; y++){
                 for(int x = tilePos.x - 1; x <= tilePos.x + 1; x++){
                     if(x < 0 || x >= map.GetLength(0) || y < 0 || y >= map.GetLength(1)){
