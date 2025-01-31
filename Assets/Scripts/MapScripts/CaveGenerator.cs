@@ -16,6 +16,19 @@ public class CaveGenerator : MonoBehaviour
     public NavGraph navGraphObject;
 
     public const float CYCLE_TUNNEL_CHANCE = .2f;
+    public void Awake() {
+        Vector2Int chunkDim = new Vector2Int(75, 75);
+        Vector2Int mapDimInChunks = new Vector2Int(5,3);
+
+        bool[,] map = GenerateCaveMap(chunkDim, mapDimInChunks, 20, 10, .4f, 3);
+
+        UnweighetedAdjacencyList<Vector2Int> navGraph = CreateNavGraph(map, chunkDim.x * mapDimInChunks.x);
+        File.WriteAllText("Assets/Debug/NavGraphOutput.txt", navGraph.ToString());
+        
+        tilemapManager.Set2DMap(map, chunkDim.x * mapDimInChunks.x, chunkDim.y * mapDimInChunks.y);
+        navGraphObject.SetNavGraph(navGraph);
+    }
+
     public static bool[,] GenerateCaveMap(Vector2Int chunkDim, Vector2Int mapDimInChunks, int maxStartRadius, int minStartRadius, float maxRadiusChange, int extraRooms){
         bool[,] map = new bool[chunkDim.x * mapDimInChunks.x, chunkDim.y * mapDimInChunks.y];
 
@@ -149,10 +162,10 @@ public class CaveGenerator : MonoBehaviour
         bool[,] map = GenerateCaveMap(chunkDim, mapDimInChunks, 20, 10, .4f, 3);
 
         UnweighetedAdjacencyList<Vector2Int> navGraph = CreateNavGraph(map, chunkDim.x * mapDimInChunks.x);
-        File.WriteAllText("Assets/Debug/NavGraphOutput.txt", navGraph.ToString());
+        //File.WriteAllText("Assets/Debug/NavGraphOutput.txt", navGraph.ToString());
         
         tilemapManager.Set2DMap(map, chunkDim.x * mapDimInChunks.x, chunkDim.y * mapDimInChunks.y);
-        navGraphObject.SetNavGraph(navGraph);
+        //navGraphObject.SetNavGraph(navGraph);
     }
 
     public static bool[,] CreateMapFromEmptyTiles(Vector2Int chunkDim, Vector2Int mapDimInChunks, HashSet<Vector2Int> emptyTiles){
