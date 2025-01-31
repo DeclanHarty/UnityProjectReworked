@@ -16,10 +16,16 @@ public class CaveGenerator : MonoBehaviour
     public NavGraph navGraphObject;
 
     public const float CYCLE_TUNNEL_CHANCE = .2f;
-    public static HashSet<Vector2Int> GenerateCaveMap(Vector2Int chunkDim, Vector2Int mapDimInChunks, int maxStartRadius, int minStartRadius, float maxRadiusChange, int extraRooms){
+    public static bool[,] GenerateCaveMap(Vector2Int chunkDim, Vector2Int mapDimInChunks, int maxStartRadius, int minStartRadius, float maxRadiusChange, int extraRooms){
         bool[,] map = new bool[chunkDim.x * mapDimInChunks.x, chunkDim.y * mapDimInChunks.y];
 
-        HashSet<Vector2Int> emptyTiles = new HashSet<Vector2Int>();
+        Debug.Log("1");
+        for(int x = 0; x < map.GetLength(0); x++){
+            for(int y = 0; y < map.GetLength(1); y++){
+                map[x,y] = true;
+            }
+        }
+
 
         IPoint[] room_centers = new IPoint[mapDimInChunks.x * mapDimInChunks.y + extraRooms];
 
@@ -28,6 +34,7 @@ public class CaveGenerator : MonoBehaviour
 
         // Each chunk in the map contains one 'room'
         // This loops through each chunk and creates the room for that chunk
+        Debug.Log("2");
         for(int y = 0; y < mapDimInChunks.y; y++){
             for(int x = 0; x < mapDimInChunks.x; x++){
                 // Determines the starting radius of the base circle for the room
@@ -47,14 +54,15 @@ public class CaveGenerator : MonoBehaviour
                 List<Vector2> tiles = Scanline.PolygonFill(roundedPoints);
                 Vector2Int[] roundedTiles = Scanline.ConvertFloatPolygonToIntPolygon(tiles.ToArray());
 
-                // Adds the determined air tiles to the emptytiles set
+                // Sets tiles to false that should be air
                 foreach(Vector2Int tile in roundedTiles){
-                    emptyTiles.Add(new Vector2Int(tile.x, tile.y)); 
+                    map[tile.x, tile.y] = false;
                 }                                                    
             }
         }
 
         // Adds extra rooms to the cave
+        Debug.Log("3");
         for(int i = 0; i < extraRooms; i++){
             float radius = UnityEngine.Random.Range(minStartRadius, maxStartRadius);
                 // Finds the position for the Perlin Noise
@@ -73,7 +81,7 @@ public class CaveGenerator : MonoBehaviour
 
                 // Adds the determined air tiles to the emptytiles set
                 foreach(Vector2Int tile in roundedTiles){
-                    emptyTiles.Add(new Vector2Int(tile.x, tile.y)); 
+                    map[tile.x, tile.y] = false;
                 }                                                    
         }
 
@@ -89,6 +97,7 @@ public class CaveGenerator : MonoBehaviour
         HashSet<Vector2Int> createdTunnels = new HashSet<Vector2Int>();
 
         // Generate the MST Tunnels
+        Debug.Log("4");
         for(int x = 0; x < mst.GetLength(0); x++){
             for(int y = 0; y < mst.GetLength(1); y++){
                 if(mst[x,y] != 0 && !createdTunnels.Contains(new Vector2Int(x,y))){
@@ -97,7 +106,7 @@ public class CaveGenerator : MonoBehaviour
                     Vector2Int[] roundedTiles = Scanline.ConvertFloatPolygonToIntPolygon(raster.ToArray());
 
                     foreach(Vector2Int tile in roundedTiles){
-                        emptyTiles.Add(new Vector2Int(tile.x, tile.y)); 
+                        map[tile.x, tile.y] = false;
                     }
 
                     //Add connection to createdTunnels set
@@ -108,6 +117,7 @@ public class CaveGenerator : MonoBehaviour
         }
 
         // Add the extra cycling tunnels
+        Debug.Log("5");
         for(int x = 0; x < mst.GetLength(0); x++){
             for(int y = 0; y < mst.GetLength(1); y++){
                 if(adjacencyGraph[x,y] != 0 && !createdTunnels.Contains(new Vector2Int(x,y))){
@@ -118,7 +128,7 @@ public class CaveGenerator : MonoBehaviour
                         Vector2Int[] roundedTiles = Scanline.ConvertFloatPolygonToIntPolygon(raster.ToArray());
 
                         foreach(Vector2Int tile in roundedTiles){
-                            emptyTiles.Add(new Vector2Int(tile.x, tile.y)); 
+                            map[tile.x, tile.y] = false; 
                         }
 
                         //Add connection to createdTunnels set
@@ -133,7 +143,7 @@ public class CaveGenerator : MonoBehaviour
         TimeSpan duration = after.Subtract(before);
         Debug.Log("EmptyTile Creation Duration in milliseconds: " + duration.Milliseconds);
 
-        return emptyTiles;
+        return map;
     }  
 
     [ContextMenu("Create Cave")]
@@ -141,10 +151,9 @@ public class CaveGenerator : MonoBehaviour
         Vector2Int chunkDim = new Vector2Int(75, 75);
         Vector2Int mapDimInChunks = new Vector2Int(5,3);
 
-        HashSet<Vector2Int> emptyTiles = GenerateCaveMap(chunkDim, mapDimInChunks, 20, 10, .4f, 3);
-        bool [,] map = CreateMapFromEmptyTiles(chunkDim, mapDimInChunks, emptyTiles);
+        bool[,] map = GenerateCaveMap(chunkDim, mapDimInChunks, 20, 10, .4f, 3);
 
-        UnweighetedAdjacencyList<Vector2Int> navGraph = CreateNavGraph(emptyTiles.ToList(), chunkDim.x * mapDimInChunks.x);
+        UnweighetedAdjacencyList<Vector2Int> navGraph = CreateNavGraph(map, chunkDim.x * mapDimInChunks.x);
         File.WriteAllText("Assets/Debug/NavGraphOutput.txt", navGraph.ToString());
         
         tilemapManager.Set2DMap(map, chunkDim.x * mapDimInChunks.x, chunkDim.y * mapDimInChunks.y);
@@ -167,29 +176,48 @@ public class CaveGenerator : MonoBehaviour
         return map;
     }
 
-    public static UnweighetedAdjacencyList<Vector2Int> CreateNavGraph(List<Vector2Int> emptyTiles, int mapWidthInTiles){
+    public static UnweighetedAdjacencyList<Vector2Int> CreateNavGraph(bool[,] map, int mapWidthInTiles){
         
         DateTime before = DateTime.Now;
         UnweighetedAdjacencyList<Vector2Int> navGraph = new UnweighetedAdjacencyList<Vector2Int>();
-        for(int i = 0; i < emptyTiles.Count(); i++){
-            List<Vector2Int> neighbors = new List<Vector2Int>();
-            Vector2Int tile = emptyTiles.ElementAt(i);
+        Debug.Log("6");
+        for(int x = 0; x < map.GetLength(0); x++){
+            for(int y = 0; y < map.GetLength(1); y++){
+                List<Vector2Int> neighbors = new List<Vector2Int>();
 
-            for(int y = tile.y - 1; y <= tile.y + 1; y++){
-                for(int x = tile.x - 1; x <= tile.x + 1; x++){
-                    if((x != emptyTiles[i].x || y != emptyTiles[i].y) && emptyTiles.Contains(new Vector2Int(x,y))){
-                        neighbors.Add(new Vector2Int(x - mapWidthInTiles / 2, -y));
-                    }
-                }
+                // for(int y = tile.y - 1; y <= tile.y + 1; y++){
+                //     for(int x = tile.x - 1; x <= tile.x + 1; x++){
+                //         if((x != emptyTiles[i].x || y != emptyTiles[i].y) && emptyTiles.Contains(new Vector2Int(x,y))){
+                //             neighbors.Add(new Vector2Int(x - mapWidthInTiles / 2, -y));
+                //         }
+                //     }
+                // }
+
+                AddValidNeighbors(new Vector2Int(x,y), map, neighbors);
+                UnweighetedAdjacencyListNode<Vector2Int> node = new UnweighetedAdjacencyListNode<Vector2Int>(new Vector2Int(x - mapWidthInTiles / 2, -y), neighbors);
+                navGraph.AddNode(node);
             }
-            UnweighetedAdjacencyListNode<Vector2Int> node = new UnweighetedAdjacencyListNode<Vector2Int>(new Vector2Int(emptyTiles[i].x - mapWidthInTiles / 2, -emptyTiles[i].y), neighbors);
-            navGraph.AddNode(node);
         }
+            
 
         DateTime after = DateTime.Now;
         TimeSpan duration = after.Subtract(before);
         Debug.Log("NavGraph Duration in milliseconds: " + duration.Milliseconds);
         return navGraph;
+    }
+
+    public static void AddValidNeighbors(Vector2Int tilePos, bool[,] map, List<Vector2Int> neighbors){
+        Debug.Log("7");
+        for(int y = tilePos.y - 1; y <= tilePos.y + 1; y++){
+                for(int x = tilePos.x - 1; x <= tilePos.x + 1; x++){
+                    if(x < 0 || x >= map.GetLength(0) || y < 0 || y >= map.GetLength(1)){
+                        continue;
+                    }
+                    if((x != tilePos.x || y != tilePos.y) && !map[x,y]){
+                        neighbors.Add(new Vector2Int(x - map.GetLength(0) / 2, -y));
+                    }
+                }
+            }
     }
 
 }
