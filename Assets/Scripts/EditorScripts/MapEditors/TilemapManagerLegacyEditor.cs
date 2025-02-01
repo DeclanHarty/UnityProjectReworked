@@ -3,12 +3,12 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
 
-[CustomEditor (typeof(TilemapManager))]
-public class TilemapManagerEditor : Editor
+[CustomEditor (typeof(TilemapManagerLegacy))]
+public class TilemapManagerLegacyEditor : Editor
 {
     public override void OnInspectorGUI()
     {
-        TilemapManager tilemapManager = (TilemapManager)target;
+        TilemapManagerLegacy tilemapManager = (TilemapManagerLegacy)target;
 
         DrawDefaultInspector();
         if(tilemapManager.generationType == GenerationType.CELLULAR_AUTOMATA){

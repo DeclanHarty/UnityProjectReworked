@@ -29,7 +29,7 @@ public class Enemy : MonoBehaviour
 
     [ContextMenu("GetMovementPointsToTarget")]
     public void GetMovementPoints(){
-        movementPoints = tilemapManager.GetAStarPoints(transform.position, chaser.transform.position);
+        //movementPoints = tilemapManager.GetAStarPoints(transform.position, chaser.transform.position);
     }
 
     public void Update(){

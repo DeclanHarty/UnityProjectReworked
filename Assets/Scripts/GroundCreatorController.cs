@@ -23,16 +23,6 @@ public class GroundCreatorController : MonoBehaviour
 
     public GameObject worldPlaceholder;
 
-    public bool[] CreateMap(){
-        map = TilemapManager.Convert2DArrayMapToArrayMap(StaticNoiseGenerator.GenerateStaticBWNoise(width, height, cutoff), width, height);
-
-        for(int i = 0; i < CAIterations; i++){
-            map = CaveCA.RunTurn(map, width);
-        }
-
-        return map;
-
-    }
 
     void Start(){
         // createMap();

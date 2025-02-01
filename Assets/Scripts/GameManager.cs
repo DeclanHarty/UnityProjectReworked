@@ -17,9 +17,10 @@ public class GameManager : MonoBehaviour
     // Start is called before the first frame update
     void Awake()
     {
-        caveGenerator.SetMap();
+        MapInfo mapInfo = caveGenerator.SetMap();
         playerManager.InjectInputManager(inputManager);
         playerManager.SwitchState(new FreeMovement());
+        playerManager.SetPlayerPosition(tilemapManager.CellToWorldPosition(mapInfo.spawnPosInTilemap));
     }
 
     // Update is called once per frame

@@ -6,7 +6,7 @@ using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 
-public class TilemapManager : MonoBehaviour
+public class TilemapManagerLegacy : MonoBehaviour
 {
     public Tilemap tilemap;
 

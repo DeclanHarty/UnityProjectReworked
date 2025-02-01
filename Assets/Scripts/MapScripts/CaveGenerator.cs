@@ -15,16 +15,18 @@ public class CaveGenerator : MonoBehaviour
     public TilemapManager tilemapManager;
     public NavGraph navGraphObject;
 
+    public const int DIRT_TILE_ID = 0;
     public const float CYCLE_TUNNEL_CHANCE = .2f;
+
     public void Start() {
     }
 
-    public static bool[,] GenerateCaveMap(Vector2Int chunkDim, Vector2Int mapDimInChunks, int maxStartRadius, int minStartRadius, float maxRadiusChange, int extraRooms){
-        bool[,] map = new bool[chunkDim.x * mapDimInChunks.x, chunkDim.y * mapDimInChunks.y];
+    public static MapInfo GenerateCaveMap(Vector2Int chunkDim, Vector2Int mapDimInChunks, int maxStartRadius, int minStartRadius, float maxRadiusChange, int extraRooms){
+        int[,] map = new int[chunkDim.x * mapDimInChunks.x, chunkDim.y * mapDimInChunks.y];
 
         for(int x = 0; x < map.GetLength(0); x++){
             for(int y = 0; y < map.GetLength(1); y++){
-                map[x,y] = true;
+                map[x,y] = 0;
             }
         }
 
@@ -57,7 +59,7 @@ public class CaveGenerator : MonoBehaviour
 
                 // Sets tiles to false that should be air
                 foreach(Vector2Int tile in roundedTiles){
-                    map[tile.x, tile.y] = false;
+                    map[tile.x, tile.y] = -1;
                 }                                                    
             }
         }
@@ -81,7 +83,7 @@ public class CaveGenerator : MonoBehaviour
 
                 // Adds the determined air tiles to the emptytiles set
                 foreach(Vector2Int tile in roundedTiles){
-                    map[tile.x, tile.y] = false;
+                    map[tile.x, tile.y] = -1;
                 }                                                    
         }
 
@@ -105,7 +107,7 @@ public class CaveGenerator : MonoBehaviour
                     Vector2Int[] roundedTiles = Scanline.ConvertFloatPolygonToIntPolygon(raster.ToArray());
 
                     foreach(Vector2Int tile in roundedTiles){
-                        map[tile.x, tile.y] = false;
+                        map[tile.x, tile.y] = -1;
                     }
 
                     //Add connection to createdTunnels set
@@ -126,7 +128,7 @@ public class CaveGenerator : MonoBehaviour
                         Vector2Int[] roundedTiles = Scanline.ConvertFloatPolygonToIntPolygon(raster.ToArray());
 
                         foreach(Vector2Int tile in roundedTiles){
-                            map[tile.x, tile.y] = false; 
+                            map[tile.x, tile.y] = -1; 
                         }
 
                         //Add connection to createdTunnels set
@@ -137,31 +139,53 @@ public class CaveGenerator : MonoBehaviour
             }
         }
 
+        // Determines the room the player will spawn in
+        int startRoomIndex = UnityEngine.Random.Range(0, mapDimInChunks.x);
+        Vector2 playerSpawn__ = room_centers[startRoomIndex].ToVector2();
+        Vector2Int playerSpawn = new Vector2Int((int)Math.Round(playerSpawn__.x) - (chunkDim.x * mapDimInChunks.x)   / 2, -(int)Math.Round(playerSpawn__.y));
+
         DateTime after = DateTime.Now;
         TimeSpan duration = after.Subtract(before);
         Debug.Log("EmptyTile Creation Duration in milliseconds: " + duration.Milliseconds);
 
-        return map;
+        return new MapInfo(playerSpawn, map);
     }  
 
     [ContextMenu("Create Cave")]
-    public void SetMap(){
+    public MapInfo SetMap(){
         Vector2Int chunkDim = new Vector2Int(75, 75);
         Vector2Int mapDimInChunks = new Vector2Int(5,3);
 
-        bool[,] map;
+        MapInfo mapInfo;
         try{
-            map = GenerateCaveMap(chunkDim, mapDimInChunks, 20, 10, .4f, 3);
+            mapInfo = GenerateCaveMap(chunkDim, mapDimInChunks, 20, 10, .4f, 3);
         }catch(ArgumentOutOfRangeException){
-            map = GenerateCaveMap(chunkDim, mapDimInChunks, 20, 10, .4f, 3);
+            mapInfo  = GenerateCaveMap(chunkDim, mapDimInChunks, 20, 10, .4f, 3);
         }
         
 
-        UnweighetedAdjacencyList<Vector2Int> navGraph = CreateNavGraph(map, chunkDim.x * mapDimInChunks.x);
+        UnweighetedAdjacencyList<Vector2Int> navGraph = CreateNavGraph(mapInfo.GetMap(), chunkDim.x * mapDimInChunks.x);
         //File.WriteAllText("Assets/Debug/NavGraphOutput.txt", navGraph.ToString());
         
-        tilemapManager.Set2DMap(map, chunkDim.x * mapDimInChunks.x, chunkDim.y * mapDimInChunks.y);
+        tilemapManager.Set2DMap(mapInfo.GetMap());
         navGraphObject.SetNavGraph(navGraph);
+
+        return mapInfo;
+    }
+
+    [ContextMenu("Test Generation Time")]
+    public void TestGenerate(){
+        Vector2Int chunkDim = new Vector2Int(75, 75);
+        Vector2Int mapDimInChunks = new Vector2Int(5,3);
+
+        MapInfo mapInfo;
+        try{
+            mapInfo = GenerateCaveMap(chunkDim, mapDimInChunks, 20, 10, .4f, 3);
+        }catch(ArgumentOutOfRangeException){
+            mapInfo  = GenerateCaveMap(chunkDim, mapDimInChunks, 20, 10, .4f, 3);
+        }
+
+        CreateNavGraph(mapInfo.GetMap(), chunkDim.x * mapDimInChunks.x);
     }
 
 
@@ -182,7 +206,7 @@ public class CaveGenerator : MonoBehaviour
         return map;
     }
 
-    public static UnweighetedAdjacencyList<Vector2Int> CreateNavGraph(bool[,] map, int mapWidthInTiles){
+    public static UnweighetedAdjacencyList<Vector2Int> CreateNavGraph(int[,] map, int mapWidthInTiles){
         
         DateTime before = DateTime.Now;
         UnweighetedAdjacencyList<Vector2Int> navGraph = new UnweighetedAdjacencyList<Vector2Int>();
@@ -213,13 +237,13 @@ public class CaveGenerator : MonoBehaviour
         return navGraph;
     }
 
-    public static void AddValidNeighbors(Vector2Int tilePos, bool[,] map, List<Vector2Int> neighbors){
+    public static void AddValidNeighbors(Vector2Int tilePos, int[,] map, List<Vector2Int> neighbors){
         for(int y = tilePos.y - 1; y <= tilePos.y + 1; y++){
                 for(int x = tilePos.x - 1; x <= tilePos.x + 1; x++){
                     if(x < 0 || x >= map.GetLength(0) || y < 0 || y >= map.GetLength(1)){
                         continue;
                     }
-                    if((x != tilePos.x || y != tilePos.y) && !map[x,y]){
+                    if((x != tilePos.x || y != tilePos.y) && map[x,y] == -1){
                         neighbors.Add(new Vector2Int(x - map.GetLength(0) / 2, -y));
                     }
                 }

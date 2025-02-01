@@ -196,6 +196,10 @@ public class Movement : MonoBehaviour
         switchingDirection = false;
     }
 
+    public void SetPlayerPosition(Vector2 position){
+        rb.position = position;
+    }
+
     public Vector2 GetPlayerPosition(){
         return transform.position;
     }

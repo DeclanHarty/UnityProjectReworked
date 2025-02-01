@@ -47,4 +47,8 @@ public class PlayerManager : MonoBehaviour
         this.playerState.InjectPlayerManager(this);
         this.playerState.OnStateChange();
     }
+
+    public void SetPlayerPosition(Vector2 position){
+        movement.SetPlayerPosition(position);
+    }
 }
