@@ -9,6 +9,7 @@ public class GameManager : MonoBehaviour
     public PlayerManager playerManager;
     public ChunkManager chunkManager;
     public TilemapManager tilemapManager;
+    public CaveGenerator caveGenerator;
     public CameraController cameraController;
 
     public GridLayout gridLayout;
@@ -16,6 +17,7 @@ public class GameManager : MonoBehaviour
     // Start is called before the first frame update
     void Awake()
     {
+        caveGenerator.SetMap();
         playerManager.InjectInputManager(inputManager);
         playerManager.SwitchState(new FreeMovement());
     }
@@ -37,7 +39,6 @@ public class GameManager : MonoBehaviour
             chunkManager.ChangeActiveChunks(chunkSet);
             chunkManager.LoadAndDeloadChunks();
         }
-        
     }
 
     void FixedUpdate(){

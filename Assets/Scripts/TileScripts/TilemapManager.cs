@@ -43,7 +43,7 @@ public class TilemapManager : MonoBehaviour
     public GenerationType generationType;
 
     [Header("NavGraph")]
-    public NavGraph navGraph;
+    public UnweighetedAdjacencyList<Vector2Int> navGraph;
     public Vector2Int testStartPos;
     public Vector2Int testEndPos;
 
@@ -108,13 +108,13 @@ public class TilemapManager : MonoBehaviour
     }
 
     public void SetNavGraph(UnweighetedAdjacencyList<Vector2Int> navGraph){
-        //this.navGraph = navGraph;
+        this.navGraph = navGraph;
     
     }
 
     [ContextMenu("Test A Star")]
     public void TestAStar(/*Vector2Int startPos, Vector2Int endPos */){
-        List<Vector2Int> list = AStar<Vector2Int>.UWAStarPath(testStartPos, testEndPos, AStar<Vector2Int>.DirectDistanceHeuristic, navGraph.GetNavGraph());
+        List<Vector2Int> list = AStar<Vector2Int>.UWAStarPath(testStartPos, testEndPos, AStar<Vector2Int>.DirectDistanceHeuristic, navGraph);
     }
 
 
@@ -196,7 +196,7 @@ public class TilemapManager : MonoBehaviour
         Vector2Int endCell = new Vector2Int(endCell3.x, endCell3.y);
 
         
-        UnweighetedAdjacencyList<Vector2Int> graph = navGraph.GetNavGraph();
+        UnweighetedAdjacencyList<Vector2Int> graph = navGraph;
         Debug.Log(graph.Count());
 
         List<Vector2Int> cellList = AStar<Vector2Int>.UWAStarPath(startCell, endCell, AStar<Vector2Int>.DirectDistanceHeuristic, graph);

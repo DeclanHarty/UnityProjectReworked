@@ -32,4 +32,8 @@ public class InputManager : MonoBehaviour
     public bool IsSpacebarPressed(){
         return Input.GetKeyDown(KeyCode.Space);
     }
+
+    public bool LPressed(){
+        return Input.GetKeyDown(KeyCode.L);
+    }
 }
