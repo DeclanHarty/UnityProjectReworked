@@ -11,6 +11,7 @@ public class GameManager : MonoBehaviour
     public TilemapManager tilemapManager;
     public CaveGenerator caveGenerator;
     public CameraController cameraController;
+    public EnemyManager enemyManager;
 
     public GridLayout gridLayout;
 
@@ -20,7 +21,9 @@ public class GameManager : MonoBehaviour
         MapInfo mapInfo = caveGenerator.SetMap();
         playerManager.InjectInputManager(inputManager);
         playerManager.SwitchState(new FreeMovement());
-        playerManager.SetPlayerPosition(tilemapManager.CellToWorldPosition(mapInfo.spawnPosInTilemap));
+        Vector2 playerWorldPosition = tilemapManager.CellToWorldPosition(mapInfo.spawnPosInTilemap);
+        playerManager.SetPlayerPosition(playerWorldPosition);
+        cameraController.SetPostion(playerWorldPosition);
     }
 
     // Update is called once per frame
@@ -40,10 +43,13 @@ public class GameManager : MonoBehaviour
             chunkManager.ChangeActiveChunks(chunkSet);
             chunkManager.LoadAndDeloadChunks();
         }
+
+        enemyManager.UpdateManager(playerManager.GetPlayerPosition());
     }
 
     void FixedUpdate(){
         playerManager.FixedUpdatePlayer();
+        enemyManager.FixedUpdateManager(playerManager.GetPlayerPosition());
     }
 
     void OnDrawGizmos(){

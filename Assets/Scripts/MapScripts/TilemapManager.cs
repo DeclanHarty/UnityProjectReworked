@@ -13,10 +13,10 @@ public class TilemapManager : MonoBehaviour
 
     public int[,] map;
 
-
     public UnweighetedAdjacencyList<Vector2Int> navGraph;
 
     public void Set2DMap(int[,] map){
+        this.map = map;
         int mapWidth = map.GetLength(0);
         int mapHeight = map.GetLength(1);
         List<TileBase> tileList = new List<TileBase>();
@@ -46,8 +46,6 @@ public class TilemapManager : MonoBehaviour
         Vector3Int startCell3 = tilemap.WorldToCell(start);
         Vector2Int startCell = new Vector2Int(startCell3.x, startCell3.y);
 
-        Debug.Log(startCell);
-
         Vector3Int endCell3 = tilemap.WorldToCell(end);
         Vector2Int endCell = new Vector2Int(endCell3.x, endCell3.y);
 
@@ -61,6 +59,10 @@ public class TilemapManager : MonoBehaviour
             Vector3 pos3 = tilemap.CellToWorld((Vector3Int)cell);
             posList.Add(new Vector2Int((int)Math.Floor(pos3.x), (int)Math.Floor(pos3.x)));
         }
+
+        foreach(Vector2Int pos in posList){
+            Debug.Log(pos);
+        }
         return posList;
     }
 
@@ -72,5 +74,14 @@ public class TilemapManager : MonoBehaviour
     public Vector2Int WorldToCellPosition(Vector2 worldPos){
         Vector3Int startCell = tilemap.WorldToCell(worldPos);
         return (Vector2Int)startCell;
+    }
+
+    public int GetTileValue(Vector2Int tilePos){
+        int tileXPosition = tilePos.x + map.GetLength(0) / 2;
+        int tileYPosition = -tilePos.y;
+        if(tileXPosition < 0 || tileYPosition < 0 || tileXPosition >= map.GetLength(0) || tileYPosition >= map.GetLength(1)){
+            return 0;
+        }
+        return map[tileXPosition, tileYPosition];
     }
 }

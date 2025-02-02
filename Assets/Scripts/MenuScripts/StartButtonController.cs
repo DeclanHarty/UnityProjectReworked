@@ -8,10 +8,16 @@ public class StartButtonController : MonoBehaviour
 {
     private AsyncOperation coroutine;
     public void MoveToNextScene(){
-        StartCoroutine(loadScene());
+        LoadScene();
+    }
+    
+    public void LoadScene(){
+        StartCoroutine(LoadSceneAsync());
     }
 
-    IEnumerator loadScene(){
+
+
+    IEnumerator LoadSceneAsync(){
         AsyncOperation asyncOperation = SceneManager.LoadSceneAsync("Scenes/Testing/TilesetTesting");
 
         while(!asyncOperation.isDone){

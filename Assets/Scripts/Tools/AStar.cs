@@ -39,12 +39,9 @@ public static class AStar<T>
             }
 
             openSet.Remove(current);
-            Debug.Log(graph.Count());
             List<T> neighbors = graph.GetNeighbors(current);
-            Debug.Log(neighbors.Count);
             foreach(T neighbor in neighbors){
                 float tentativeGScore = gScore[current] + 1;
-
                 if(tentativeGScore < gScore[neighbor]){
                     cameFrom[neighbor] = current;
                     gScore[neighbor] = tentativeGScore;

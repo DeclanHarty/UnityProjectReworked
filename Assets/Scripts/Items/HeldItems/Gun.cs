@@ -33,8 +33,10 @@ public class Gun : HeldItem
                     hit.collider.gameObject.GetComponent<Enemy>().TakeDamage(damage);
                 }
                 Debug.DrawLine(currentPosition, (Vector2)(hit.distance * (Quaternion.AngleAxis(bullet_angle, Vector3.forward) * mouseDirection))  + currentPosition, Color.red, .2f);
-
+            }else{
+                Debug.DrawLine(currentPosition, (Vector2)(max_distance * (Quaternion.AngleAxis(bullet_angle, Vector3.forward) * mouseDirection))  + currentPosition, Color.red, .2f);
             }
+            
         }
     }
 

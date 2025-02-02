@@ -168,7 +168,7 @@ public class CaveGenerator : MonoBehaviour
         //File.WriteAllText("Assets/Debug/NavGraphOutput.txt", navGraph.ToString());
         
         tilemapManager.Set2DMap(mapInfo.GetMap());
-        navGraphObject.SetNavGraph(navGraph);
+        tilemapManager.SetNavGraph(navGraph);
 
         return mapInfo;
     }
