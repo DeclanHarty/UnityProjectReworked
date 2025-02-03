@@ -21,6 +21,8 @@ public class EnemyManager : MonoBehaviour
     private float timeSinceLastSpawn;
     public float timeBetweenSpawns;
 
+    public int maxDepth;
+
     public void UpdateManager(Vector2 playerPosition){
         foreach(Enemy enemy in activeEnemies){
             enemy.StateUpdate(playerPosition);
@@ -36,7 +38,7 @@ public class EnemyManager : MonoBehaviour
 
     public void FixedUpdateManager(Vector2 playerPosition){
         foreach(Enemy enemy in activeEnemies){
-            enemy.StateUpdate(playerPosition);
+            enemy.StateFixedUpdate(playerPosition);
         }
     }
 
@@ -95,7 +97,7 @@ public class EnemyManager : MonoBehaviour
         activeEnemies.Remove(enemy);
     }
 
-    public List<Vector2Int> GetAStarPoints(Vector2 start, Vector2 end){
-        return tilemapManager.GetAStarPoints(start, end);
+    public List<Vector2> GetAStarPoints(Vector2 start, Vector2 end){
+        return tilemapManager.GetAStarPoints(start, end, maxDepth);
     }
 }

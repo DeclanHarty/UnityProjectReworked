@@ -41,7 +41,7 @@ public class TilemapManager : MonoBehaviour
     
     }
 
-    public List<Vector2Int> GetAStarPoints(Vector2 start, Vector2 end){
+    public List<Vector2> GetAStarPoints(Vector2 start, Vector2 end, int maxDepth){
         //Convert Stant and End Cells to Tilemap Positions
         Vector3Int startCell3 = tilemap.WorldToCell(start);
         Vector2Int startCell = new Vector2Int(startCell3.x, startCell3.y);
@@ -51,18 +51,16 @@ public class TilemapManager : MonoBehaviour
 
         
         UnweighetedAdjacencyList<Vector2Int> graph = navGraph;
-        Debug.Log(graph.Count());
 
-        List<Vector2Int> cellList = AStar<Vector2Int>.UWAStarPath(startCell, endCell, AStar<Vector2Int>.DirectDistanceHeuristic, graph);
-        List<Vector2Int> posList = new List<Vector2Int>();
+        List<Vector2Int> cellList = AStar<Vector2Int>.UWAStarPath(startCell, endCell, AStar<Vector2Int>.DirectDistanceHeuristic, graph, maxDepth);
+
+        List<Vector2> posList = new List<Vector2>();
         foreach(Vector2Int cell in cellList){
             Vector3 pos3 = tilemap.CellToWorld((Vector3Int)cell);
-            posList.Add(new Vector2Int((int)Math.Floor(pos3.x), (int)Math.Floor(pos3.x)));
+            Vector2 pos = new Vector2(pos3.x, pos3.y);
+            posList.Add(pos);
         }
 
-        foreach(Vector2Int pos in posList){
-            Debug.Log(pos);
-        }
         return posList;
     }
 

@@ -2,16 +2,18 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Priority_Queue;
+using Unity.Jobs;
 using Unity.PlasticSCM.Editor.WebApi;
 using Unity.VisualScripting;
 using UnityEngine;
 
 public static class AStar<T>
 {
-    public static List<T> UWAStarPath(T start, T goal, Func<T, T, float> heuristic, UnweighetedAdjacencyList<T> graph){
-        List<T> openSet = new List<T>(new T[] {start});
+    public static List<T> UWAStarPath(T start, T goal, Func<T, T, float> heuristic, UnweighetedAdjacencyList<T> graph, int maxDepth = int.MaxValue){
+        FastPriorityQueue<GenericFastPriorityQueueNode<T>> openSet = new FastPriorityQueue<GenericFastPriorityQueueNode<T>>(100000);
 
-        int iteration = 0;
+        // Start time for testing
 
         Dictionary<T,T> cameFrom = new Dictionary<T, T>();
         
@@ -23,22 +25,27 @@ public static class AStar<T>
         gScore[start] = 0;
 
         Dictionary<T, float> fScore = new Dictionary<T, float>();
+
         foreach(T value in graph.GetNodeValues()){
             fScore[value] = float.PositiveInfinity;
         }
 
         fScore[start] = gScore[start] + heuristic(start, goal);
 
-        while(openSet.Count != 0){
-            iteration++;
-            Debug.Log(iteration);
-            T current = GetMinFScoreNode(openSet, fScore);
+        int currentDepth = 0;
+        T lastCameFrom = default(T);
 
-            if(current.Equals(goal)){
+        GenericFastPriorityQueueNode<T> startNode = new GenericFastPriorityQueueNode<T>();
+        startNode.value = start;
+        openSet.Enqueue(startNode, fScore[start]);
+
+        while(openSet.Count != 0){
+            T current = openSet.Dequeue().value;
+
+            if(current.Equals(goal) || currentDepth >= maxDepth){
                 return ReconstructPath(cameFrom, current);
             }
 
-            openSet.Remove(current);
             List<T> neighbors = graph.GetNeighbors(current);
             foreach(T neighbor in neighbors){
                 float tentativeGScore = gScore[current] + 1;
@@ -46,9 +53,19 @@ public static class AStar<T>
                     cameFrom[neighbor] = current;
                     gScore[neighbor] = tentativeGScore;
                     fScore[neighbor] = tentativeGScore + heuristic(neighbor, goal);
-                    if(!openSet.Contains(neighbor)){
-                        openSet.Add(neighbor);
+                    GenericFastPriorityQueueNode<T> neighborNode = new GenericFastPriorityQueueNode<T>();
+                    neighborNode.value = neighbor;
+                    if(openSet.Contains(neighborNode)){
+                        openSet.UpdatePriority(neighborNode, fScore[neighbor]);
+                    }else{
+                        openSet.Enqueue(neighborNode, fScore[neighbor]);
                     }
+                }
+            }
+            if(!cameFrom.ContainsKey(current) || !cameFrom[current].Equals(lastCameFrom)){
+                currentDepth++;
+                if(cameFrom.ContainsKey(current)){
+                    lastCameFrom = cameFrom[current];
                 }
             }
         }
@@ -85,4 +102,25 @@ public static class AStar<T>
     public static float DirectDistanceHeuristic(Vector2Int pos, Vector2Int goal){
         return (goal - pos).magnitude;
     }
+}
+
+public class GenericFastPriorityQueueNode<T> : FastPriorityQueueNode{
+    public T value {get; set;}
+}
+
+public class AStarJob<T> : IJob
+{
+    public T start; 
+    public T goal;
+    public Func<T, T, float> heuristic; 
+    public UnweighetedAdjacencyList<T> graph;
+    public int maxDepth = int.MaxValue;
+
+    public List<T> path;
+    public void Execute()
+    {
+        path = AStar<T>.UWAStarPath(start, goal, heuristic, graph, maxDepth);
+    }
+
+      
 }

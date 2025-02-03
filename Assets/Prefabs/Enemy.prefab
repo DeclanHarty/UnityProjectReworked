@@ -173,67 +173,15 @@ MonoBehaviour:
   chaser: {fileID: 0}
   tilemapManager: {fileID: 0}
   enemyManager: {fileID: 0}
-  movementPoints:
-  - {x: -26, y: -26}
-  - {x: -26, y: -26}
-  - {x: -26, y: -26}
-  - {x: -25, y: -25}
-  - {x: -25, y: -25}
-  - {x: -25, y: -25}
-  - {x: -25, y: -25}
-  - {x: -25, y: -25}
-  - {x: -25, y: -25}
-  - {x: -24, y: -24}
-  - {x: -24, y: -24}
-  - {x: -24, y: -24}
-  - {x: -24, y: -24}
-  - {x: -24, y: -24}
-  - {x: -25, y: -25}
-  - {x: -25, y: -25}
-  - {x: -25, y: -25}
-  - {x: -25, y: -25}
-  - {x: -25, y: -25}
-  - {x: -25, y: -25}
-  - {x: -25, y: -25}
-  - {x: -25, y: -25}
-  - {x: -26, y: -26}
-  - {x: -26, y: -26}
-  - {x: -26, y: -26}
-  - {x: -26, y: -26}
-  - {x: -26, y: -26}
-  - {x: -26, y: -26}
-  - {x: -26, y: -26}
-  - {x: -26, y: -26}
-  - {x: -26, y: -26}
-  - {x: -26, y: -26}
-  - {x: -26, y: -26}
-  - {x: -26, y: -26}
-  - {x: -26, y: -26}
-  - {x: -26, y: -26}
-  - {x: -26, y: -26}
-  - {x: -26, y: -26}
-  - {x: -26, y: -26}
-  - {x: -25, y: -25}
-  - {x: -25, y: -25}
-  - {x: -25, y: -25}
-  - {x: -25, y: -25}
-  - {x: -25, y: -25}
-  - {x: -25, y: -25}
-  - {x: -24, y: -24}
-  - {x: -24, y: -24}
-  - {x: -24, y: -24}
-  - {x: -24, y: -24}
-  - {x: -24, y: -24}
-  - {x: -24, y: -24}
-  - {x: -24, y: -24}
-  - {x: -24, y: -24}
-  - {x: -24, y: -24}
-  - {x: -24, y: -24}
-  - {x: -24, y: -24}
-  - {x: -24, y: -24}
-  - {x: -24, y: -24}
-  - {x: -24, y: -24}
+  movementPoints: []
   rb: {fileID: 3416815691692295145}
   movementPointTolerence: 0.1
   timeSinceLastPathfind: 0
-  timeBetweenPathfind: 2
+  timeBetweenPathfind: 1
+  enemyState: 0
+  awarenessDistance: 5
+  playerMask:
+    serializedVersion: 2
+    m_Bits: 136
+  lastSeenPlayerPosition: {x: 0, y: 0}
+  playerLost: 0
