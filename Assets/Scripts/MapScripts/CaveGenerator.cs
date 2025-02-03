@@ -237,6 +237,28 @@ public class CaveGenerator : MonoBehaviour
         return navGraph;
     }
 
+    public static UnweighetedAdjacencyList<Vector2Int> CreateReducedNavGraph(int[,] map, int mapWidthInTiles){
+        
+        DateTime before = DateTime.Now;
+        UnweighetedAdjacencyList<Vector2Int> navGraph = new UnweighetedAdjacencyList<Vector2Int>();
+        int width = map.GetLength(0);
+        int height = map.GetLength(1);
+        for(int x = 2; x < width; x+=6){
+            for(int y = 2; y < height; y+=6){
+                List<Vector2Int> neighbors = new List<Vector2Int>();
+                AddValidReducedNeighbors(new Vector2Int(x,y), map, neighbors);
+                UnweighetedAdjacencyListNode<Vector2Int> node = new UnweighetedAdjacencyListNode<Vector2Int>(new Vector2Int(x - mapWidthInTiles / 2, -y), neighbors);
+                navGraph.AddNode(node);
+            }
+        }
+            
+
+        DateTime after = DateTime.Now;
+        TimeSpan duration = after.Subtract(before);
+        Debug.Log("NavGraph Duration in milliseconds: " + duration.Milliseconds);
+        return navGraph;
+    }
+
     public static UnweighetedAdjacencyList<Vector2Int> CreateNavGraphWithFourNeighbors(int[,] map, int mapWidthInTiles){
         
         DateTime before = DateTime.Now;
@@ -294,6 +316,20 @@ public class CaveGenerator : MonoBehaviour
             }
         }
             
+    }
+
+    public static void AddValidReducedNeighbors(Vector2Int tilePos, int[,] map, List<Vector2Int> neighbors){
+        Vector2Int[] neighborDirections = {new Vector2Int(2,0), new Vector2Int(-2,0), new Vector2Int(0,2),new Vector2Int(0,-2), new Vector2Int(2,2), new Vector2Int(2,-2), new Vector2Int(-2,2), new Vector2Int(-2,-2)};
+        foreach(Vector2Int dir in neighborDirections){
+            int x = tilePos.x + dir.x;
+            int y = tilePos.y + dir.y;
+            if(x < 0 || x >= map.GetLength(0) || y < 0 || y >= map.GetLength(1)){
+                continue;
+            }
+            if(map[x, y] == -1){
+                neighbors.Add(new Vector2Int(x - map.GetLength(0) / 2, -y));
+            }
+        }
     }
         
     

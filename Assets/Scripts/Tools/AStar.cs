@@ -8,12 +8,12 @@ using Unity.PlasticSCM.Editor.WebApi;
 using Unity.VisualScripting;
 using UnityEngine;
 
-public static class AStar<T>
+public class AStar<T> : IPathfinder<T>
 {
     public static List<T> UWAStarPath(T start, T goal, Func<T, T, float> heuristic, UnweighetedAdjacencyList<T> graph, int maxDepth = int.MaxValue){
+        DateTime before = DateTime.Now;
         FastPriorityQueue<GenericFastPriorityQueueNode<T>> openSet = new FastPriorityQueue<GenericFastPriorityQueueNode<T>>(100000);
 
-        // Start time for testing
 
         Dictionary<T,T> cameFrom = new Dictionary<T, T>();
         
@@ -23,27 +23,28 @@ public static class AStar<T>
         }
 
         gScore[start] = 0;
-
-        Dictionary<T, float> fScore = new Dictionary<T, float>();
-
-        foreach(T value in graph.GetNodeValues()){
-            fScore[value] = float.PositiveInfinity;
-        }
-
-        fScore[start] = gScore[start] + heuristic(start, goal);
+        float fScore = gScore[start] + heuristic(start, goal);
 
         int currentDepth = 0;
         T lastCameFrom = default(T);
 
         GenericFastPriorityQueueNode<T> startNode = new GenericFastPriorityQueueNode<T>();
         startNode.value = start;
-        openSet.Enqueue(startNode, fScore[start]);
+
+        
+        openSet.Enqueue(startNode, fScore);
+        
+        
 
         while(openSet.Count != 0){
+
             T current = openSet.Dequeue().value;
 
             if(current.Equals(goal) || currentDepth >= maxDepth){
-                return ReconstructPath(cameFrom, current);
+                DateTime after = DateTime.Now;
+                TimeSpan duration = after.Subtract(before);
+                Debug.Log("NavGraph Duration in milliseconds: " + duration.Milliseconds);
+                return IPathfinder<T>.ReconstructPath(cameFrom, current);
             }
 
             List<T> neighbors = graph.GetNeighbors(current);
@@ -52,13 +53,13 @@ public static class AStar<T>
                 if(tentativeGScore < gScore[neighbor]){
                     cameFrom[neighbor] = current;
                     gScore[neighbor] = tentativeGScore;
-                    fScore[neighbor] = tentativeGScore + heuristic(neighbor, goal);
+                    fScore = tentativeGScore + heuristic(neighbor, goal);
                     GenericFastPriorityQueueNode<T> neighborNode = new GenericFastPriorityQueueNode<T>();
                     neighborNode.value = neighbor;
                     if(openSet.Contains(neighborNode)){
-                        openSet.UpdatePriority(neighborNode, fScore[neighbor]);
+                        openSet.UpdatePriority(neighborNode, fScore);
                     }else{
-                        openSet.Enqueue(neighborNode, fScore[neighbor]);
+                        openSet.Enqueue(neighborNode, fScore);
                     }
                 }
             }
@@ -68,22 +69,21 @@ public static class AStar<T>
                     lastCameFrom = cameFrom[current];
                 }
             }
+            
         }
 
         throw new Exception("Goal not found in graph.");
     }
 
-    private static List<T> ReconstructPath(Dictionary<T, T> cameFrom, T current){
-        List<T> totalPath = new List<T>();
-        totalPath.Add(current);
-        while(cameFrom.ContainsKey(current)){
-            current = cameFrom[current];
-            totalPath.Add(current);
-        }
-
-        totalPath.Reverse();
-        return totalPath;
-    }
+    // private static List<T> ReconstructPath(Dictionary<T, T> cameFrom, T current){
+    //     List<T> totalPath = new List<T>();
+    //     totalPath.Add(current);
+    //     while(cameFrom.ContainsKey(current)){
+    //         current = cameFrom[current];
+    //         totalPath.Insert(0, current);
+    //     }
+    //     return totalPath;
+    // }
 
     private static T GetMinFScoreNode(List<T> queue, Dictionary<T, float> fScoreMap){
         float minFScore = float.MaxValue;
@@ -101,6 +101,14 @@ public static class AStar<T>
 
     public static float DirectDistanceHeuristic(Vector2Int pos, Vector2Int goal){
         return (goal - pos).magnitude;
+    }
+
+    public static float DistanceSquaredHeuristic(Vector2Int pos, Vector2Int goal){
+        return Mathf.Pow((goal - pos).magnitude, 2);
+    }
+
+    public static float ManhattanDistance(Vector2Int pos, Vector2Int goal){
+        return Mathf.Abs(pos.x - goal.x) + Mathf.Abs(pos.y - goal.y);
     }
 }
 

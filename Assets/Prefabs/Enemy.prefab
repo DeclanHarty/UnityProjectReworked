@@ -177,7 +177,7 @@ MonoBehaviour:
   rb: {fileID: 3416815691692295145}
   movementPointTolerence: 0.1
   timeSinceLastPathfind: 0
-  timeBetweenPathfind: 1
+  timeBetweenPathfind: 2
   enemyState: 0
   awarenessDistance: 5
   playerMask:
