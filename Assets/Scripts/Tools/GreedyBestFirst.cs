@@ -27,7 +27,7 @@ public class GreedyBestFirst<T> : IPathfinder<T>
         
         
 
-         while(openSet.Count != 0){
+        while(openSet.Count != 0){
 
             T current = openSet.Dequeue().value;
 
@@ -45,8 +45,8 @@ public class GreedyBestFirst<T> : IPathfinder<T>
                 GenericFastPriorityQueueNode<T> neighborNode = new GenericFastPriorityQueueNode<T>();
                 neighborNode.value = neighbor;
                 openSet.Enqueue(neighborNode, hValue);
-                }
             }
+            
             if(!cameFrom.ContainsKey(current) || !cameFrom[current].Equals(lastCameFrom)){
                 currentDepth++;
                 if(cameFrom.ContainsKey(current)){
@@ -55,6 +55,8 @@ public class GreedyBestFirst<T> : IPathfinder<T>
             }
             
         }
-}
+
+        throw new Exception("Goal not found in graph.");
+    }
 
 }
