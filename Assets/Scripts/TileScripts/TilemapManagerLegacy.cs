@@ -114,7 +114,7 @@ public class TilemapManagerLegacy : MonoBehaviour
 
     [ContextMenu("Test A Star")]
     public void TestAStar(/*Vector2Int startPos, Vector2Int endPos */){
-        List<Vector2Int> list = AStar<Vector2Int>.UWAStarPath(testStartPos, testEndPos, AStar<Vector2Int>.DirectDistanceHeuristic, navGraph);
+        //List<Vector2Int> list = AStar<Vector2Int>.UWAStarPath(testStartPos, testEndPos, AStar<Vector2Int>.DirectDistanceHeuristic, navGraph);
     }
 
 
@@ -199,12 +199,12 @@ public class TilemapManagerLegacy : MonoBehaviour
         UnweighetedAdjacencyList<Vector2Int> graph = navGraph;
         Debug.Log(graph.Count());
 
-        List<Vector2Int> cellList = AStar<Vector2Int>.UWAStarPath(startCell, endCell, AStar<Vector2Int>.DirectDistanceHeuristic, graph);
+        // //List<Vector2Int> cellList = AStar<Vector2Int>.UWAStarPath(startCell, endCell, AStar<Vector2Int>.DirectDistanceHeuristic, graph);
         List<Vector2Int> posList = new List<Vector2Int>();
-        foreach(Vector2Int cell in cellList){
-            Vector3 pos3 = tilemap.CellToWorld((Vector3Int)cell);
-            posList.Add(new Vector2Int((int)Math.Floor(pos3.x), (int)Math.Floor(pos3.x)));
-        }
+        // foreach(Vector2Int cell in cellList){
+        //     Vector3 pos3 = tilemap.CellToWorld((Vector3Int)cell);
+        //     posList.Add(new Vector2Int((int)Math.Floor(pos3.x), (int)Math.Floor(pos3.x)));
+        // }
         return posList;
     }
 

@@ -97,7 +97,7 @@ public class EnemyManager : MonoBehaviour
         activeEnemies.Remove(enemy);
     }
 
-    public List<Vector2> GetAStarPoints(Vector2 start, Vector2 end){
-        return tilemapManager.GetAStarPoints(start, end, maxDepth);
+    public List<Vector2> GetMovementPoints(Vector2 start, Vector2 end){
+        return tilemapManager.GetPath(start, end, maxDepth);
     }
 }

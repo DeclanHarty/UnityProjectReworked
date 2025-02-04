@@ -42,7 +42,7 @@ public class Enemy : MonoBehaviour
 
     [ContextMenu("GetMovementPointsToTarget")]
     public void GetMovementPoints(Vector2 goalPosition){
-        movementPoints = enemyManager.GetAStarPoints(transform.position, goalPosition);
+        movementPoints = enemyManager.GetMovementPoints(transform.position, goalPosition);
     }
 
     public void StateUpdate(Vector2 playerPosition){

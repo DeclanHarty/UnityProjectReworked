@@ -13,4 +13,18 @@ public interface IPathfinder<T>
         }
         return totalPath;
     }
+
+    static T GetMinFScoreNode(List<T> queue, Dictionary<T, float> fScoreMap){
+        float minFScore = float.MaxValue;
+        T valueWithLowestFScore = default(T);
+
+        foreach(T value in queue){
+            float currentFScore = fScoreMap[value];
+            if(currentFScore < minFScore){
+                minFScore = currentFScore;
+                valueWithLowestFScore = value;
+            }
+        }
+        return valueWithLowestFScore;
+    }
 }
