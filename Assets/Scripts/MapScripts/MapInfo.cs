@@ -5,7 +5,9 @@ using UnityEngine;
 public class MapInfo
 {
     public Vector2Int spawnPosInTilemap;
+    public Vector2Int roomCenters;
     public int[,] map;
+
 
     public MapInfo(Vector2Int spawnPosInTilemap, int[,] map){
         this.spawnPosInTilemap = spawnPosInTilemap;
