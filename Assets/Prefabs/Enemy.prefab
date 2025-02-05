@@ -170,8 +170,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   enemyInfo: {fileID: 11400000, guid: abe99f7e105b239499c3bb599710a934, type: 2}
   currentHealth: 0
-  chaser: {fileID: 0}
-  tilemapManager: {fileID: 0}
   enemyManager: {fileID: 0}
   movementPoints: []
   rb: {fileID: 3416815691692295145}
@@ -179,9 +177,9 @@ MonoBehaviour:
   timeSinceLastPathfind: 0
   timeBetweenPathfind: 2
   enemyState: 0
-  awarenessDistance: 5
+  awarenessDistance: 0
   playerMask:
     serializedVersion: 2
     m_Bits: 136
   lastSeenPlayerPosition: {x: 0, y: 0}
-  playerLost: 0
+  playerVisible: 0

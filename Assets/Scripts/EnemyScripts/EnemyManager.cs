@@ -27,6 +27,7 @@ public class EnemyManager : MonoBehaviour
         foreach(Enemy enemy in activeEnemies){
             enemy.StateUpdate(playerPosition);
         }
+        
 
         timeSinceLastSpawn += Time.deltaTime;
         if(timeSinceLastSpawn > timeBetweenSpawns){

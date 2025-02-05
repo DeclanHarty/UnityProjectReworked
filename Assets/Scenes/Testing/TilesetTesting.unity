@@ -215,7 +215,7 @@ MonoBehaviour:
   minSpawnDistance: 60
   maxSpawnDistance: 90
   despawnDistance: 100
-  maxSpawnedEnemies: 1
+  maxSpawnedEnemies: 8
   timeBetweenSpawns: 5
   maxDepth: 80
 --- !u!114 &513631005 stripped

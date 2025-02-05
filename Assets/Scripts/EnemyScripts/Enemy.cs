@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor;
 using UnityEngine;
 
 public class Enemy : MonoBehaviour
@@ -7,10 +8,6 @@ public class Enemy : MonoBehaviour
     public EnemyInfo enemyInfo;
 
     public int currentHealth;
-
-    public GameObject chaser;
-
-    public TilemapManager tilemapManager;
     public EnemyManager enemyManager;
 
     public List<Vector2> movementPoints;
@@ -26,7 +23,7 @@ public class Enemy : MonoBehaviour
     public float awarenessDistance;
     public LayerMask playerMask;
     public Vector2 lastSeenPlayerPosition;
-    public bool playerLost;
+    public bool playerVisible;
 
 
     public void Awake(){
@@ -46,63 +43,45 @@ public class Enemy : MonoBehaviour
     }
 
     public void StateUpdate(Vector2 playerPosition){
-        timeSinceLastPathfind += Time.deltaTime;
-
-        // switch(enemyState){
-        //     case EnemyState.WANDER:
-        //         if(Vector2.Distance(rb.position, playerPosition) < awarenessDistance){
-        //             enemyState = EnemyState.CHASE;
-        //         }
-
-        //     break;
-
-        //     case EnemyState.CHASE:
-        //         if(timeSinceLastPathfind > timeBetweenPathfind){
-        //             timeSinceLastPathfind = 0;
-        //             if(!playerLost){
-        //                 GetMovementPoints(playerPosition);
-        //             }else{
-        //                 GetMovementPoints(lastSeenPlayerPosition);
-        //             }
-                    
-        //         }
-        //     break;
-        // }
-
-        if(timeSinceLastPathfind > timeBetweenPathfind){
-            timeSinceLastPathfind = 0;
-            if(!playerLost){
-                GetMovementPoints(playerPosition);
-            }else{
-                GetMovementPoints(lastSeenPlayerPosition);
-            }
-        }
+        //timeSinceLastPathfind += Time.deltaTime;
 
     }
 
     public void StateFixedUpdate(Vector2 playerPosition){
-        // switch(enemyState){
-        //     case EnemyState.CHASE:
-        //         RaycastHit2D hit = Physics2D.Raycast(rb.position, (playerPosition - rb.position).normalized, float.PositiveInfinity, playerMask);
-        //         if(hit && hit.collider.gameObject.layer == LayerMask.NameToLayer("Player")){
-        //             lastSeenPlayerPosition = hit.point;
-        //             playerLost = false;
-        //         }else{
-        //             playerLost = true;
-        //             if(Vector2.Distance(lastSeenPlayerPosition, rb.position) < movementPointTolerence){
-        //                 enemyState = EnemyState.WANDER;
-        //                 playerLost = false;
-        //                 break;
-        //             }
-        //         }
-        //         if(movementPoints.Count > 0){
-        //             rb.MovePosition(Vector2.MoveTowards(transform.position, movementPoints[0], enemyInfo.speed * Time.deltaTime));
-        //             if(Vector2.Distance(rb.position, movementPoints[0]) < movementPointTolerence){
-        //                 movementPoints.RemoveAt(0);
-        //             }
-        //         }
-        //     break;
-        // }
+        RaycastHit2D hit;
+        switch(enemyState){
+            case EnemyState.WANDER:
+                hit = Physics2D.Raycast(rb.position, (playerPosition - rb.position).normalized, float.PositiveInfinity, playerMask);
+                if(hit && hit.collider.gameObject.layer == LayerMask.NameToLayer("Player")){
+                    lastSeenPlayerPosition = hit.point;
+                    playerVisible = true;
+                    enemyState = EnemyState.CHASE;
+                }
+            break;
+            case EnemyState.CHASE:
+                hit = Physics2D.Raycast(rb.position, (playerPosition - rb.position).normalized, float.PositiveInfinity, playerMask);
+                if(hit && hit.collider.gameObject.layer == LayerMask.NameToLayer("Player")){
+                    lastSeenPlayerPosition = hit.point;
+                    playerVisible = true;
+                    rb.MovePosition(Vector2.MoveTowards(rb.position, playerPosition, enemyInfo.speed * Time.deltaTime));
+                }else{
+                    playerVisible = false;
+                    rb.MovePosition(Vector2.MoveTowards(rb.position, lastSeenPlayerPosition, enemyInfo.speed * Time.deltaTime));
+                    if(Vector2.Distance(lastSeenPlayerPosition, rb.position) < movementPointTolerence){
+                        enemyState = EnemyState.WANDER;  
+                        playerVisible = false;
+                        movementPoints.Clear();
+                        break;
+                    }
+                }
+                // if(movementPoints.Count > 0){
+                //     rb.MovePosition(Vector2.MoveTowards(transform.position, movementPoints[0], enemyInfo.speed * Time.deltaTime));
+                //     if(Vector2.Distance(rb.position, movementPoints[0]) < movementPointTolerence){
+                //         movementPoints.RemoveAt(0);
+                //     }
+                // }
+            break;
+        }
         if(movementPoints.Count > 0){
             rb.MovePosition(Vector2.MoveTowards(transform.position, movementPoints[0], enemyInfo.speed * Time.deltaTime));
             if(Vector2.Distance(rb.position, movementPoints[0]) < movementPointTolerence){
