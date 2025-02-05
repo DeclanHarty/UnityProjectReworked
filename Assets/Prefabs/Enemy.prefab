@@ -177,7 +177,7 @@ MonoBehaviour:
   timeSinceLastPathfind: 0
   timeBetweenPathfind: 2
   enemyState: 0
-  awarenessDistance: 0
+  visionDistance: 5
   playerMask:
     serializedVersion: 2
     m_Bits: 136

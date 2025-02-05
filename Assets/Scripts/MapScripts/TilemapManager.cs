@@ -66,7 +66,7 @@ public class TilemapManager : MonoBehaviour
     }
 
     public Vector2 CellToWorldPosition(Vector2Int cellPos){
-        Vector3 pos = tilemap.CellToWorld((Vector3Int)cellPos);
+        Vector3 pos = tilemap.GetCellCenterWorld((Vector3Int)cellPos);
         return (Vector2)pos;
     }
 
@@ -82,5 +82,9 @@ public class TilemapManager : MonoBehaviour
             return 0;
         }
         return map[tileXPosition, tileYPosition];
+    }
+
+    public Vector3 GetTileSize(){
+        return tilemap.cellSize;
     }
 }

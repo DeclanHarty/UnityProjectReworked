@@ -20,7 +20,7 @@ public class Enemy : MonoBehaviour
     public float timeBetweenPathfind;
 
     public EnemyState enemyState;
-    public float awarenessDistance;
+    public float visionDistance;
     public LayerMask playerMask;
     public Vector2 lastSeenPlayerPosition;
     public bool playerVisible;
@@ -51,7 +51,7 @@ public class Enemy : MonoBehaviour
         RaycastHit2D hit;
         switch(enemyState){
             case EnemyState.WANDER:
-                hit = Physics2D.Raycast(rb.position, (playerPosition - rb.position).normalized, float.PositiveInfinity, playerMask);
+                hit = Physics2D.Raycast(rb.position, (playerPosition - rb.position).normalized, visionDistance, playerMask);
                 if(hit && hit.collider.gameObject.layer == LayerMask.NameToLayer("Player")){
                     lastSeenPlayerPosition = hit.point;
                     playerVisible = true;
@@ -59,7 +59,7 @@ public class Enemy : MonoBehaviour
                 }
             break;
             case EnemyState.CHASE:
-                hit = Physics2D.Raycast(rb.position, (playerPosition - rb.position).normalized, float.PositiveInfinity, playerMask);
+                hit = Physics2D.Raycast(rb.position, (playerPosition - rb.position).normalized, visionDistance, playerMask);
                 if(hit && hit.collider.gameObject.layer == LayerMask.NameToLayer("Player")){
                     lastSeenPlayerPosition = hit.point;
                     playerVisible = true;
