@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEditor;
 using UnityEngine;
 
@@ -22,12 +23,14 @@ public class Enemy : MonoBehaviour
     public EnemyState enemyState;
     public float visionDistance;
     public LayerMask playerMask;
-    public Vector2 lastSeenPlayerPosition;
+    public Vector2 lastKnownPlayerPosition;
     public bool playerVisible;
 
-    public bool lostLineOfSight = false;
+    public bool playerEscaped = false;
 
     public List<Vector2> lastSeenPositions = new List<Vector2>();
+
+    public float maxPsycheDistance;
 
 
     public void Awake(){
@@ -52,50 +55,48 @@ public class Enemy : MonoBehaviour
     }
 
     public void StateFixedUpdate(Vector2 playerPosition){
-        RaycastHit2D hit;
+        RaycastHit2D enemyLosCheck = Physics2D.Raycast(rb.position, (playerPosition - rb.position).normalized, visionDistance, playerMask);
         switch(enemyState){
             case EnemyState.WANDER:
-                hit = Physics2D.Raycast(rb.position, (playerPosition - rb.position).normalized, visionDistance, playerMask);
-                if(hit && hit.collider.gameObject.layer == LayerMask.NameToLayer("Player")){
-                    lastSeenPlayerPosition = hit.point;
-                    playerVisible = true;
+                if(enemyLosCheck && enemyLosCheck.collider.gameObject.layer == LayerMask.NameToLayer("Player")){
+                    lastKnownPlayerPosition = playerPosition;
                     enemyState = EnemyState.CHASE;
-                }
+                }  
             break;
             case EnemyState.CHASE:
-                hit = Physics2D.Raycast(rb.position, (playerPosition - rb.position).normalized, visionDistance, playerMask);
-                if(hit && hit.collider.gameObject.layer == LayerMask.NameToLayer("Player")){
-                    lastSeenPlayerPosition = hit.point;
-                    playerVisible = true;
+                if(enemyLosCheck && enemyLosCheck.collider.gameObject.layer == LayerMask.NameToLayer("Player")){
+                    lastKnownPlayerPosition = playerPosition;
+                    lastSeenPositions.Clear();
                     rb.MovePosition(Vector2.MoveTowards(rb.position, playerPosition, enemyInfo.speed * Time.deltaTime));
                 }else{
                     //Check if enemy has just lost LOS
-                    if(!lostLineOfSight){
-                        lastSeenPositions.Add(lastSeenPlayerPosition);
-                        lostLineOfSight = false;
+                    if(lastSeenPositions.Count == 0){
+                        lastSeenPositions.Add(lastKnownPlayerPosition);
                     }
-                    playerVisible = false;
-                    rb.MovePosition(Vector2.MoveTowards(rb.position, lastSeenPlayerPosition, enemyInfo.speed * Time.deltaTime));
-                    if(Vector2.Distance(lastSeenPlayerPosition, rb.position) < movementPointTolerence){
-                        enemyState = EnemyState.WANDER;  
-                        playerVisible = false;
-                        movementPoints.Clear();
-                        break;
+
+                    RaycastHit2D lastSeenPositionCheck = Physics2D.Raycast(lastSeenPositions.Last(), (playerPosition - lastSeenPositions.Last()).normalized, visionDistance, playerMask);
+                    if(lastSeenPositionCheck && lastSeenPositionCheck.collider.gameObject.layer == LayerMask.NameToLayer("Player")){
+                        lastKnownPlayerPosition = playerPosition;
+                    }else if(!playerEscaped){
+                        lastSeenPositions.Add(lastKnownPlayerPosition);
+                        if(Vector2.Distance(lastSeenPositions[0], playerPosition) > maxPsycheDistance){
+                            playerEscaped = true;
+                        }
                     }
+
+
+                    rb.MovePosition(Vector2.MoveTowards(rb.position, lastSeenPositions[0], enemyInfo.speed * Time.deltaTime));
+                    if(Vector2.Distance(rb.position, lastSeenPositions[0]) < movementPointTolerence){
+                        lastSeenPositions.RemoveAt(0);
+                        if(lastSeenPositions.Count == 0){
+                            enemyState = EnemyState.WANDER;
+                            playerEscaped = false;
+                        }
+                    }
+
                 }
-                // if(movementPoints.Count > 0){
-                //     rb.MovePosition(Vector2.MoveTowards(transform.position, movementPoints[0], enemyInfo.speed * Time.deltaTime));
-                //     if(Vector2.Distance(rb.position, movementPoints[0]) < movementPointTolerence){
-                //         movementPoints.RemoveAt(0);
-                //     }
-                // }
+
             break;
-        }
-        if(movementPoints.Count > 0){
-            rb.MovePosition(Vector2.MoveTowards(transform.position, movementPoints[0], enemyInfo.speed * Time.deltaTime));
-            if(Vector2.Distance(rb.position, movementPoints[0]) < movementPointTolerence){
-                movementPoints.RemoveAt(0);
-            }  
         }
     }
 
@@ -121,4 +122,10 @@ public class Enemy : MonoBehaviour
         CHASE,
         SEARCH
     } 
+
+    void OnDrawGizmos(){
+        foreach(Vector2 pos in lastSeenPositions){
+            Gizmos.DrawSphere(pos, .1f);
+        }
+    }
 }

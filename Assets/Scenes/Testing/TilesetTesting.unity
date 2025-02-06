@@ -344,7 +344,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5997117734846715740, guid: 553d841deabdb3d4993721dccea986f8, type: 3}
       propertyPath: maxHookDistance
-      value: 3
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 5997117734846715740, guid: 553d841deabdb3d4993721dccea986f8, type: 3}
       propertyPath: layerMask.m_Bits

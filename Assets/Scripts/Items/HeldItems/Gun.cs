@@ -7,8 +7,8 @@ using UnityEngine;
 public class Gun : HeldItem
 {
     public int damage = 4;
-    public int number_pellets = 6;
-    public float max_angle_of_spread = 10;
+    public int number_pellets = 4;
+    public float max_angle_of_spread = 30;
     public float max_distance = 5;
 
     public override void Fire1Action()
