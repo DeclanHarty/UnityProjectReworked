@@ -25,6 +25,10 @@ public class Enemy : MonoBehaviour
     public Vector2 lastSeenPlayerPosition;
     public bool playerVisible;
 
+    public bool lostLineOfSight = false;
+
+    public List<Vector2> lastSeenPositions = new List<Vector2>();
+
 
     public void Awake(){
         currentHealth = enemyInfo.maxHealth;
@@ -65,6 +69,11 @@ public class Enemy : MonoBehaviour
                     playerVisible = true;
                     rb.MovePosition(Vector2.MoveTowards(rb.position, playerPosition, enemyInfo.speed * Time.deltaTime));
                 }else{
+                    //Check if enemy has just lost LOS
+                    if(!lostLineOfSight){
+                        lastSeenPositions.Add(lastSeenPlayerPosition);
+                        lostLineOfSight = false;
+                    }
                     playerVisible = false;
                     rb.MovePosition(Vector2.MoveTowards(rb.position, lastSeenPlayerPosition, enemyInfo.speed * Time.deltaTime));
                     if(Vector2.Distance(lastSeenPlayerPosition, rb.position) < movementPointTolerence){
