@@ -7,12 +7,20 @@ using UnityEngine;
 public class Gun : HeldItem
 {
     public int damage = 4;
-    public int number_pellets = 4;
+    public int number_pellets = 6;
     public float max_angle_of_spread = 30;
     public float max_distance = 5;
 
+    public float firingSpeed = 1;
+    public float timeSinceLastFired = 1;
+
     public override void Fire1Action()
     {
+        if(timeSinceLastFired < firingSpeed){
+            return;
+        }
+        timeSinceLastFired = 0;
+
         for(int i = 0; i < number_pellets; i++ ){
             float bullet_angle;
 
@@ -43,5 +51,10 @@ public class Gun : HeldItem
     public override void Fire2Action()
     {
         throw new System.NotImplementedException();
+    }
+
+    public override void Update()
+    {
+        timeSinceLastFired += Time.deltaTime;
     }
 }

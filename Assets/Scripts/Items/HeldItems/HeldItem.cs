@@ -23,4 +23,6 @@ public abstract class HeldItem
     public void SetCurrentPosition(Vector2 currentPos){
         this.currentPosition = currentPos;
     }
+
+    public abstract void Update();
 }

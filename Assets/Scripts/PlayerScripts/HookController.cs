@@ -5,7 +5,8 @@ using UnityEngine;
 public class HookController : MonoBehaviour
 {
     public float maxHookDistance;
-    public float hookingSpeed;
+    public float maxHookingSpeed;
+    public float hookingAcceleration;
     public bool playerReachedHook;
     
     public LayerMask layerMask;
@@ -30,7 +31,9 @@ public class HookController : MonoBehaviour
     }
 
     public void MoveTowardsHook(){
-        rb.velocity = GetHookDirection() * hookingSpeed;
+        rb.velocity += GetHookDirection() * hookingAcceleration * Time.deltaTime;
+        rb.velocity = Vector2.ClampMagnitude(rb.velocity, maxHookingSpeed);
+
     }
 
     public void ReleaseHook(){
@@ -43,6 +46,10 @@ public class HookController : MonoBehaviour
 
     public Vector2 GetHookDirection(){
         return (hookPosition - (Vector2)transform.position).normalized;
+    }
+
+    public Vector2 GetVelocity(){
+        return rb.velocity;
     }
 }
 

@@ -26,6 +26,7 @@ public class PlayerManager : MonoBehaviour
 
     public void UpdatePlayer(){
         playerState.StateUpdate();
+        heldItemController.UpdateItem();
         
     }
 

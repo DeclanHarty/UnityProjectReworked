@@ -218,4 +218,10 @@ public class Movement : MonoBehaviour
         rb.velocity = Vector2.zero;
     }
 
+    public void SetVelocity(Vector2 velocity){
+        horizontalVelocity = velocity.x;
+        verticalVelocity = velocity.y;
+        rb.velocity = velocity;
+    }
+
 }

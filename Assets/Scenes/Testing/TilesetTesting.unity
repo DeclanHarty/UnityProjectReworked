@@ -347,8 +347,16 @@ PrefabInstance:
       value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 5997117734846715740, guid: 553d841deabdb3d4993721dccea986f8, type: 3}
+      propertyPath: maxHookingSpeed
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 5997117734846715740, guid: 553d841deabdb3d4993721dccea986f8, type: 3}
       propertyPath: layerMask.m_Bits
       value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 5997117734846715740, guid: 553d841deabdb3d4993721dccea986f8, type: 3}
+      propertyPath: hookingAcceleration
+      value: 100
       objectReference: {fileID: 0}
     - target: {fileID: 8065859326265789557, guid: 553d841deabdb3d4993721dccea986f8, type: 3}
       propertyPath: m_Layer

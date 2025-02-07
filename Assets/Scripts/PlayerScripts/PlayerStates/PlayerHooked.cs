@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor.Callbacks;
 using UnityEngine;
 
 public class PlayerHooked : PlayerState
@@ -19,9 +20,16 @@ public class PlayerHooked : PlayerState
         Vector2 mouseDirection = GetMouseDirection();
         Vector2 mousePosInWorld = playerManager.inputManager.CollectMousePos();
 
+        if(playerManager.inputManager.EPressed()){
+            if(!playerManager.hookController.ThrowOutHook(GetMouseDirection())){
+                playerManager.SwitchState(new FreeMovement());
+            }
+        }
+
         if(playerManager.inputManager.IsMouse2Down()){
             playerManager.hookController.ReleaseHook();
             playerManager.SwitchState(new FreeMovement());
+            playerManager.movement.SetVelocity(playerManager.hookController.GetVelocity());
             return;
         }
 

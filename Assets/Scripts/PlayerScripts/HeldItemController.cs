@@ -20,4 +20,8 @@ public class HeldItemController : MonoBehaviour
     public void SetItem(HeldItem item){
         heldItem = item;
     }
+
+    public void UpdateItem(){
+        heldItem.Update();
+    }
 }
