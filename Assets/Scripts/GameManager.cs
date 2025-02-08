@@ -9,7 +9,6 @@ public class GameManager : MonoBehaviour
     public PlayerManager playerManager;
     public ChunkManager chunkManager;
     public TilemapManager tilemapManager;
-    public CaveGenerator caveGenerator;
     public CameraController cameraController;
     public EnemyManager enemyManager;
 
@@ -18,7 +17,12 @@ public class GameManager : MonoBehaviour
     // Start is called before the first frame update
     void Awake()
     {
-        MapInfo mapInfo = caveGenerator.SetMap();
+        // Create and Set Map
+        MapInfo mapInfo = CaveGenerator.CreateMap(new Vector2Int(75,75), new Vector2Int(5,3));
+        tilemapManager.Set2DMap(mapInfo.GetMap());
+        tilemapManager.SetNavGraph(mapInfo.GetNavGraph());
+
+        // Get Player Spawn and Move player and camera 
         playerManager.InjectInputManager(inputManager);
         playerManager.SwitchState(new FreeMovement());
         Vector2 playerWorldPosition = tilemapManager.CellToWorldPosition(mapInfo.spawnPosInTilemap);
@@ -30,11 +34,6 @@ public class GameManager : MonoBehaviour
     void Update()
     {
         Vector2 playerPos = playerManager.GetPlayerPosition();
-        // if(inputManager.isMouse1Down()){
-        //     Vector2 mousePosToWorld = (Vector2)Camera.main.ScreenToWorldPoint(mousePos);
-        //     Vector3Int mousePosToGrid = gridLayout.WorldToCell(mousePosToWorld);
-        //     tilemapManager?.BreakTile(mousePosToGrid);
-        //
         playerManager.UpdatePlayer();
         cameraController?.MoveCamera(playerPos);
 
@@ -54,5 +53,9 @@ public class GameManager : MonoBehaviour
 
     void OnDrawGizmos(){
         //Gizmos.DrawWireSphere((Vector3)playerManager.GetPlayerPosition(), chunkManager.chunkCheckRadius);
+    }
+
+    public void PlayerTookDamage(int damage){
+        playerManager.TakeDamage(damage);
     }
 }

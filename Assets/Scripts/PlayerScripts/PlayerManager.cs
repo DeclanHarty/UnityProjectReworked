@@ -15,6 +15,7 @@ public class PlayerManager : MonoBehaviour
     public HookController hookController;
     public PlayerObjectController playerObjectController;
     public HeldItemController heldItemController;
+    public PlayerHealth playerHealth;
 
     // Change this to a proper State and Strategy System
     public PlayerState playerState;
@@ -51,5 +52,13 @@ public class PlayerManager : MonoBehaviour
 
     public void SetPlayerPosition(Vector2 position){
         movement.SetPlayerPosition(position);
+    }
+
+    public void PlayerDied(){
+        return;
+    }
+
+    public void TakeDamage(int damage){
+        playerHealth.TakeDamage(damage);
     }
 }

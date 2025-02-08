@@ -152,9 +152,7 @@ public class CaveGenerator : MonoBehaviour
     }  
 
     [ContextMenu("Create Cave")]
-    public MapInfo SetMap(){
-        Vector2Int chunkDim = new Vector2Int(75, 75);
-        Vector2Int mapDimInChunks = new Vector2Int(5,3);
+    public static MapInfo CreateMap(Vector2Int chunkDim, Vector2Int mapDimInChunks){
 
         MapInfo mapInfo;
         try{
@@ -164,11 +162,7 @@ public class CaveGenerator : MonoBehaviour
         }
         
 
-        UnweighetedAdjacencyList<Vector2Int> navGraph = CreateNavGraph(mapInfo.GetMap(), chunkDim.x * mapDimInChunks.x);
-        //File.WriteAllText("Assets/Debug/NavGraphOutput.txt", navGraph.ToString());
-        
-        tilemapManager.Set2DMap(mapInfo.GetMap());
-        tilemapManager.SetNavGraph(navGraph);
+        mapInfo.SetNavGraph(CreateNavGraph(mapInfo.GetMap(), chunkDim.x * mapDimInChunks.x));
 
         return mapInfo;
     }

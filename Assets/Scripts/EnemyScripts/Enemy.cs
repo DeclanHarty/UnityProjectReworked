@@ -11,25 +11,16 @@ public class Enemy : MonoBehaviour
     public int currentHealth;
     public EnemyManager enemyManager;
 
-    public List<Vector2> movementPoints;
-
     public Rigidbody2D rb;
 
     public float movementPointTolerence;
-
-    public float timeSinceLastPathfind;
-    public float timeBetweenPathfind;
 
     public EnemyState enemyState;
     public float visionDistance;
     public LayerMask playerMask;
     public Vector2 lastKnownPlayerPosition;
-    public bool playerVisible;
-
     public bool playerEscaped = false;
-
     public List<Vector2> lastSeenPositions = new List<Vector2>();
-
     public float maxPsycheDistance;
 
 
@@ -42,11 +33,6 @@ public class Enemy : MonoBehaviour
         if(currentHealth <= 0){
             Die();
         }
-    }
-
-    [ContextMenu("GetMovementPointsToTarget")]
-    public void GetMovementPoints(Vector2 goalPosition){
-        movementPoints = enemyManager.GetMovementPoints(transform.position, goalPosition);
     }
 
     public void StateUpdate(Vector2 playerPosition){
@@ -115,6 +101,10 @@ public class Enemy : MonoBehaviour
     public void Die(){
         enemyManager.NotifyEnemyDeath(this);
         Destroy(gameObject);
+    }
+
+    public void EnemyDamagedPlayer(int damage){
+        return;
     }
 
     public enum EnemyState{

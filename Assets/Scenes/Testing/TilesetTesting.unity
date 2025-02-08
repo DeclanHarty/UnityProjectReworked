@@ -143,6 +143,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 377424406}
+  - component: {fileID: 377424407}
   m_Layer: 0
   m_Name: PlayerManager
   m_TagString: Untagged
@@ -165,6 +166,23 @@ Transform:
   m_Father: {fileID: 2090510579}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &377424407
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 377424405}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d22421c539f44d74a90e4067f0b44390, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  inputManager: {fileID: 2090510577}
+  movement: {fileID: 1895581735}
+  hookController: {fileID: 1895581743}
+  playerObjectController: {fileID: 1895581740}
+  heldItemController: {fileID: 1895581746}
 --- !u!1 &406739877
 GameObject:
   m_ObjectHideFlags: 0
@@ -211,13 +229,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   activeEnemies: []
   tilemapManager: {fileID: 2092921736}
+  gameManager: {fileID: 2090510578}
   enemyPrefab: {fileID: 3416815691692295159, guid: 20eb5185650363d4cae4acd7d33c2f99, type: 3}
   minSpawnDistance: 60
   maxSpawnDistance: 90
   despawnDistance: 100
   maxSpawnedEnemies: 8
   timeBetweenSpawns: 5
-  maxDepth: 80
 --- !u!114 &513631005 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 2169411392580842963, guid: 553d841deabdb3d4993721dccea986f8, type: 3}
@@ -1207,7 +1225,6 @@ GameObject:
   - component: {fileID: 2090510579}
   - component: {fileID: 2090510578}
   - component: {fileID: 2090510577}
-  - component: {fileID: 2090510576}
   m_Layer: 0
   m_Name: GameManager
   m_TagString: Untagged
@@ -1215,23 +1232,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &2090510576
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2090510575}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d22421c539f44d74a90e4067f0b44390, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  inputManager: {fileID: 2090510577}
-  movement: {fileID: 1895581735}
-  hookController: {fileID: 1895581743}
-  playerObjectController: {fileID: 1895581740}
-  heldItemController: {fileID: 1895581746}
 --- !u!114 &2090510577
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1257,7 +1257,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   inputManager: {fileID: 2090510577}
-  playerManager: {fileID: 2090510576}
+  playerManager: {fileID: 377424407}
   chunkManager: {fileID: 0}
   tilemapManager: {fileID: 2092921736}
   caveGenerator: {fileID: 2092921735}

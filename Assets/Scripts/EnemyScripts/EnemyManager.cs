@@ -9,6 +9,7 @@ public class EnemyManager : MonoBehaviour
     public List<Enemy> activeEnemies;
     
     public TilemapManager tilemapManager;
+    public GameManager gameManager;
 
     public GameObject enemyPrefab;
 
@@ -20,8 +21,6 @@ public class EnemyManager : MonoBehaviour
 
     private float timeSinceLastSpawn;
     public float timeBetweenSpawns;
-
-    public int maxDepth;
 
     public void UpdateManager(Vector2 playerPosition){
         foreach(Enemy enemy in activeEnemies){
@@ -45,6 +44,10 @@ public class EnemyManager : MonoBehaviour
 
     public void InjectTilemapManager(TilemapManager tilemapManager){
         this.tilemapManager = tilemapManager;
+    }
+
+    public void InjectGameManager(GameManager gameManager){
+        this.gameManager = gameManager;
     }
 
     public void SpawnCheck(Vector2 playerPosition){
@@ -98,7 +101,7 @@ public class EnemyManager : MonoBehaviour
         activeEnemies.Remove(enemy);
     }
 
-    public List<Vector2> GetMovementPoints(Vector2 start, Vector2 end){
-        return tilemapManager.GetPath(start, end, maxDepth);
+    public void EnemyDamagedPlayer(Enemy enemy){
+        
     }
 }
