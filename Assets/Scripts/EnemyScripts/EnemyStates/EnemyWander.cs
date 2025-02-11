@@ -14,6 +14,11 @@ public class EnemyWander : EnemyState
         }  
     }
 
+    public override void OnStateChange()
+    {
+        return;
+    }
+
     public override void UpdateEnemy(Vector2 playerPosition)
     {
         return;

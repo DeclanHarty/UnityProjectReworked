@@ -18,7 +18,12 @@ public class Enemy : MonoBehaviour
     public EnemyState enemyState;
     public float visionDistance;
     public LayerMask playerMask;
+
+    [Header("Pathing Variables")]
     public Vector2 lastKnownPlayerPosition;
+    public bool playerEscaped = false;
+    public List<Vector2> lastSeenPositions = new List<Vector2>();
+    public float maxPsycheDistance;
 
     public void Awake(){
         currentHealth = enemyInfo.maxHealth;
@@ -65,5 +70,9 @@ public class Enemy : MonoBehaviour
     public void SwitchState(EnemyState enemyState){
         this.enemyState = enemyState;
         this.enemyState.InjectEnemy(this);
+    }
+
+    public void HandleCoroutine(IEnumerator coroutine){
+        StartCoroutine(coroutine);
     }
 }

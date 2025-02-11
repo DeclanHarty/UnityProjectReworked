@@ -12,4 +12,6 @@ public abstract class EnemyState
     public abstract void UpdateEnemy(Vector2 playerPosition);
 
     public abstract void FixedUpdateEnemy(Vector2 playerPosition);
+
+    public abstract void OnStateChange();
 }
