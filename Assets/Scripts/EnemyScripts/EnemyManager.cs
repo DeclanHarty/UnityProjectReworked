@@ -50,7 +50,7 @@ public class EnemyManager : MonoBehaviour
         this.gameManager = gameManager;
     }
 
-    public void SpawnCheck(Vector2 playerPosition){
+    private void SpawnCheck(Vector2 playerPosition){
         if(activeEnemies.Count < maxSpawnedEnemies){
             List<Vector2Int> availableTiles = GetAvailableSpawnPoints(playerPosition);
             int chosenTileIndex = Random.Range(0, availableTiles.Count);
@@ -59,7 +59,7 @@ public class EnemyManager : MonoBehaviour
         }
     }
 
-    public void DespawnCheck(Vector2 playerPosition){
+    private void DespawnCheck(Vector2 playerPosition){
         Vector2Int playerTilePos = tilemapManager.WorldToCellPosition(playerPosition);
         List<Enemy> enemiesForRemoval = new List<Enemy>();
         for(int i = 0; i < activeEnemies.Count; i++){
@@ -76,7 +76,7 @@ public class EnemyManager : MonoBehaviour
         }
     }
 
-    public void SpawnEnemy(Vector2 spawnPosition){
+    private void SpawnEnemy(Vector2 spawnPosition){
         GameObject enemy = Instantiate(enemyPrefab, spawnPosition, Quaternion.identity);
         Enemy enemyScript = enemy.GetComponent<Enemy>();
         enemyScript.InjectEnemyManager(this);
@@ -101,7 +101,7 @@ public class EnemyManager : MonoBehaviour
         activeEnemies.Remove(enemy);
     }
 
-    public void EnemyDamagedPlayer(Enemy enemy){
-        
+    public void EnemyDamagedPlayer(int damage){
+        gameManager.PlayerTookDamage(damage);
     }
 }
