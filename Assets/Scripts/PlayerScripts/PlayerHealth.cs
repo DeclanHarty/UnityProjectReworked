@@ -9,14 +9,22 @@ public class PlayerHealth : MonoBehaviour
     public int maxHealth;
     public int currentHealth;
 
-    public void TakeDamage(int damage){
-        currentHealth -= damage;
-        if(currentHealth <= 0){
-            NotifyPlayerDied();
-        }
+    public void Awake()
+    {
+        currentHealth = maxHealth;
     }
 
-    public void Health(int healthPoints){
+    public float TakeDamage(int damage){
+        currentHealth -= damage;
+        Debug.Log(currentHealth);
+        if(currentHealth <= 0){
+            return 0;
+        }
+
+        return (float)currentHealth / (float)maxHealth;
+    }
+
+    public void Heal(int healthPoints){
         currentHealth += healthPoints;
         currentHealth = Mathf.Min(currentHealth, maxHealth);
     }

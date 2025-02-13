@@ -70,9 +70,11 @@ public class Enemy : MonoBehaviour
     public void SwitchState(EnemyState enemyState){
         this.enemyState = enemyState;
         this.enemyState.InjectEnemy(this);
+        this.enemyState.OnStateChange();
     }
 
     public void HandleCoroutine(IEnumerator coroutine){
+        Debug.Log("Coroutine Started");
         StartCoroutine(coroutine);
     }
 }

@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEditor.Experimental.GraphView;
@@ -10,7 +11,11 @@ public class PlayerManager : MonoBehaviour
     // bool spacebarHeld;
     // Vector2 mousePosToScreen;
 
+    [NonSerialized]
     public InputManager inputManager;
+    [NonSerialized]
+    public UIManager uiManager;
+
     public Movement movement;
     public HookController hookController;
     public PlayerObjectController playerObjectController;
@@ -35,9 +40,6 @@ public class PlayerManager : MonoBehaviour
         playerState.StateFixedUpdate();
     }
 
-    public void InjectInputManager(InputManager inputManager){
-        this.inputManager = inputManager;
-    }
 
     public Vector2 GetPlayerPosition(){
         return movement.GetPlayerPosition();
@@ -58,7 +60,22 @@ public class PlayerManager : MonoBehaviour
         return;
     }
 
-    public void TakeDamage(int damage){
-        playerHealth.TakeDamage(damage);
+    public bool TakeDamage(int damage){
+        float healthPercentage = playerHealth.TakeDamage(damage);
+        uiManager.UpdatePlayerHealthBar(healthPercentage);
+
+        if(healthPercentage <= 0){
+            return true;
+        }else{
+            return false;
+        }
+    }
+
+    public void InjectInputManager(InputManager inputManager){
+        this.inputManager = inputManager;
+    }
+
+    public void InjectUIManager(UIManager uiManager){
+        this.uiManager = uiManager;
     }
 }

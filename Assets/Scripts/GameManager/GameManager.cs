@@ -11,8 +11,9 @@ public class GameManager : MonoBehaviour
     public TilemapManager tilemapManager;
     public CameraController cameraController;
     public EnemyManager enemyManager;
+    public UIManager uIManager;
 
-    public GridLayout gridLayout;
+    private GameState gameState;
 
     // Start is called before the first frame update
     void Awake()
@@ -24,31 +25,24 @@ public class GameManager : MonoBehaviour
 
         // Get Player Spawn and Move player and camera 
         playerManager.InjectInputManager(inputManager);
+        playerManager.InjectUIManager(uIManager);
+        
         playerManager.SwitchState(new FreeMovement());
         Vector2 playerWorldPosition = tilemapManager.CellToWorldPosition(mapInfo.spawnPosInTilemap);
         playerManager.SetPlayerPosition(playerWorldPosition);
         cameraController.SetPostion(playerWorldPosition);
+
+        SwitchState(new Playing());
     }
 
     // Update is called once per frame
     void Update()
     {
-        Vector2 playerPos = playerManager.GetPlayerPosition();
-        playerManager.UpdatePlayer();
-        cameraController?.MoveCamera(playerPos);
-
-        if(chunkManager){
-            HashSet<Chunk> chunkSet = chunkManager.GetChunksInRadius(playerPos);
-            chunkManager.ChangeActiveChunks(chunkSet);
-            chunkManager.LoadAndDeloadChunks();
-        }
-
-        enemyManager.UpdateManager(playerManager.GetPlayerPosition());
+        gameState.StateUpdate();
     }
 
     void FixedUpdate(){
-        playerManager.FixedUpdatePlayer();
-        enemyManager.FixedUpdateManager(playerManager.GetPlayerPosition());
+        gameState.StateFixedUpdate();
     }
 
     void OnDrawGizmos(){
@@ -56,6 +50,14 @@ public class GameManager : MonoBehaviour
     }
 
     public void PlayerTookDamage(int damage){
-        playerManager.TakeDamage(damage);
+        if(playerManager.TakeDamage(damage)){
+            SwitchState(new GameOver());
+        }
+    }
+
+    public void SwitchState(GameState gameState){
+        this.gameState = gameState;
+        gameState.InjectGameManager(this);
+        gameState.OnStateChange();
     }
 }
