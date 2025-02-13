@@ -15,7 +15,6 @@ public class GameManager : MonoBehaviour
 
     private GameState gameState;
 
-    // Start is called before the first frame update
     void Awake()
     {
         // Create and Set Map
@@ -32,7 +31,9 @@ public class GameManager : MonoBehaviour
         playerManager.SetPlayerPosition(playerWorldPosition);
         cameraController.SetPostion(playerWorldPosition);
 
-        SwitchState(new Playing());
+        gameState = new Playing();
+        gameState.InjectGameManager(this);
+        gameState.OnStateEnter();
     }
 
     // Update is called once per frame
@@ -56,8 +57,9 @@ public class GameManager : MonoBehaviour
     }
 
     public void SwitchState(GameState gameState){
+        this.gameState.OnStateExit();
         this.gameState = gameState;
         gameState.InjectGameManager(this);
-        gameState.OnStateChange();
+        gameState.OnStateEnter();
     }
 }

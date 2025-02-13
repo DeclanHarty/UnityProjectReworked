@@ -4,9 +4,15 @@ using UnityEngine;
 
 public class GameOver : GameState
 {
-    public override void OnStateChange()
+    public override void OnStateEnter()
     {
-        return;
+        gameManager.enemyManager.StopAllCoroutines();
+        gameManager.playerManager.ClearAllPlayerVelocity();
+    }
+
+    public override void OnStateExit()
+    {
+        throw new System.NotImplementedException();
     }
 
     public override void StateFixedUpdate()

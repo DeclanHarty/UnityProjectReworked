@@ -4,18 +4,26 @@ using UnityEngine;
 
 public class Paused : GameState
 {
-    public override void OnStateChange()
+    public override void OnStateEnter()
     {
-        throw new System.NotImplementedException();
+        gameManager.uIManager.ActivatePauseScreen();
+        gameManager.playerManager.ClearRBVelocity();
+    }
+
+    public override void OnStateExit()
+    {
+        gameManager.uIManager.DeactivatePauseScreen();
     }
 
     public override void StateFixedUpdate()
     {
-        throw new System.NotImplementedException();
+        return;
     }
 
     public override void StateUpdate()
     {
-        throw new System.NotImplementedException();
+        if(gameManager.inputManager.EscPressed()){
+            gameManager.SwitchState(new Playing());
+        }
     }
 }

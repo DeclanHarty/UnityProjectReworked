@@ -36,4 +36,8 @@ public class InputManager : MonoBehaviour
     public bool LPressed(){
         return Input.GetKeyDown(KeyCode.L);
     }
+
+    public bool EscPressed(){
+        return Input.GetKeyDown(KeyCode.Escape);
+    }
 }

@@ -212,7 +212,7 @@ public class Movement : MonoBehaviour
         return switchingDirection;
     }
 
-    public void ClearVelocity(){
+    public void ClearAllVelocity(){
         horizontalVelocity = 0;
         verticalVelocity = 0;
         rb.velocity = Vector2.zero;

@@ -4,7 +4,12 @@ using UnityEngine;
 
 public class Playing : GameState
 {
-    public override void OnStateChange()
+    public override void OnStateEnter()
+    {
+        return;
+    }
+
+    public override void OnStateExit()
     {
         return;
     }
@@ -24,5 +29,9 @@ public class Playing : GameState
         gameManager.cameraController?.MoveCamera(playerPos);
 
         gameManager.enemyManager.UpdateManager(gameManager.playerManager.GetPlayerPosition());
+
+        if(gameManager.inputManager.EscPressed()){
+            gameManager.SwitchState(new Paused());
+        }
     }
 }

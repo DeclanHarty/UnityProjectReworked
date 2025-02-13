@@ -8,6 +8,7 @@ public class HookController : MonoBehaviour
     public float maxHookingSpeed;
     public float hookingAcceleration;
     public bool playerReachedHook;
+    public float reachedHookDistance;
     
     public LayerMask layerMask;
 
@@ -31,6 +32,11 @@ public class HookController : MonoBehaviour
     }
 
     public void MoveTowardsHook(){
+        if(playerReachedHook || Vector2.Distance(rb.position, hookPosition) < reachedHookDistance){
+            playerReachedHook = true;
+            rb.velocity = Vector2.zero;
+            return;
+        }
         rb.velocity += GetHookDirection() * hookingAcceleration * Time.deltaTime;
         rb.velocity = Vector2.ClampMagnitude(rb.velocity, maxHookingSpeed);
 
@@ -38,6 +44,7 @@ public class HookController : MonoBehaviour
 
     public void ReleaseHook(){
         hooked = false;
+        playerReachedHook = false;
     }
 
     public void OnDrawGizmos(){

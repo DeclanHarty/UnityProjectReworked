@@ -71,6 +71,14 @@ public class PlayerManager : MonoBehaviour
         }
     }
 
+    public void ClearAllPlayerVelocity(){
+        movement.ClearAllVelocity();
+    }
+
+    public void ClearRBVelocity(){
+        movement.rb.velocity = Vector2.zero;
+    }
+
     public void InjectInputManager(InputManager inputManager){
         this.inputManager = inputManager;
     }

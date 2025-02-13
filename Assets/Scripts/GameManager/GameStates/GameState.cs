@@ -9,7 +9,8 @@ public abstract class GameState
 
     public abstract void StateFixedUpdate();
 
-    public abstract void OnStateChange();
+    public abstract void OnStateEnter();
+    public abstract void OnStateExit();
 
     public void InjectGameManager(GameManager gameManager){
         this.gameManager = gameManager;

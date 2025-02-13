@@ -7,7 +7,7 @@ public class PlayerHooked : PlayerState
 {
     public override void OnStateChange()
     {
-        playerManager.movement.ClearVelocity();
+        playerManager.movement.ClearAllVelocity();
     }
 
     public override void StateFixedUpdate()
