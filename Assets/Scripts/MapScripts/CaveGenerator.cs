@@ -153,14 +153,8 @@ public class CaveGenerator : MonoBehaviour
 
     [ContextMenu("Create Cave")]
     public static MapInfo CreateMap(Vector2Int chunkDim, Vector2Int mapDimInChunks){
-
         MapInfo mapInfo;
-        try{
-            mapInfo = GenerateCaveMap(chunkDim, mapDimInChunks, 20, 10, .4f, 3);
-        }catch(ArgumentOutOfRangeException){
-            mapInfo  = GenerateCaveMap(chunkDim, mapDimInChunks, 20, 10, .4f, 3);
-        }
-        
+        mapInfo = GenerateCaveMap(chunkDim, mapDimInChunks, 20, 10, .4f, 3);
 
         mapInfo.SetNavGraph(CreateNavGraph(mapInfo.GetMap(), chunkDim.x * mapDimInChunks.x));
 

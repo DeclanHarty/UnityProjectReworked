@@ -6,9 +6,11 @@ using UnityEngine;
 public class EnemyAttacking : TrackingEnemyState
 {
     private float chargeUpTime = .5f;
-    private float attackCooldown = 1f;
+    private float attackCooldown = .5f;
     private Vector2 attackBox = new Vector2(1,1);
     private float attackDistance = .1f;
+
+    private float timePassed = 0f;
 
 
     public override void FixedUpdateEnemy(Vector2 playerPosition)
@@ -18,6 +20,7 @@ public class EnemyAttacking : TrackingEnemyState
 
     public override void OnStateChange()
     {
+        timePassed = 0;
         enemy.HandleCoroutine(Attack(enemy.lastKnownPlayerPosition));
     }
 
@@ -26,11 +29,17 @@ public class EnemyAttacking : TrackingEnemyState
         if(!HasLineOfSight(playerPosition)){
             TrackPath(playerPosition);
         }
+        timePassed += Time.deltaTime;
     }
 
     IEnumerator Attack(Vector2 playerPosition){
         //Waits until attack has charged
-        yield return new WaitForSeconds(chargeUpTime);
+        while(timePassed < chargeUpTime){
+            enemy.enemySprite.GetComponent<SpriteRenderer>().color = Color.Lerp(Color.white, Color.red, timePassed/chargeUpTime);
+            yield return null;
+        }
+        enemy.enemySprite.GetComponent<SpriteRenderer>().color = new Color(1, 1, 1);
+
         Debug.Log("Attack");
         RaycastHit2D[] hits = Physics2D.BoxCastAll(enemy.rb.position, attackBox, Vector2.Angle(Vector2.right, playerPosition - enemy.rb.position), (playerPosition - enemy.rb.position).normalized, attackDistance, enemy.playerMask);
         foreach(RaycastHit2D hit in hits){

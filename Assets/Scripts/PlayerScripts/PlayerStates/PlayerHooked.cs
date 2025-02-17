@@ -26,7 +26,7 @@ public class PlayerHooked : PlayerState
             }
         }
 
-        if(playerManager.inputManager.IsMouse2Down()){
+        if(playerManager.inputManager.IsMouse2Down() || playerManager.inputManager.LPressed()){
             playerManager.hookController.ReleaseHook();
             playerManager.SwitchState(new FreeMovement());
             playerManager.movement.SetVelocity(playerManager.hookController.GetVelocity());

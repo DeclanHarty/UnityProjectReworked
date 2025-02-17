@@ -86,8 +86,8 @@ public class EnemyManager : MonoBehaviour
     private List<Vector2Int> GetAvailableSpawnPoints(Vector2 playerPosition){
         List<Vector2Int> availableSpawnPoints = new List<Vector2Int>();
         Vector2Int playerPositionInTiles = tilemapManager.WorldToCellPosition(playerPosition);
-
-        List<Vector2Int> perimeter = MidpointCircle.FindPerimeter(playerPositionInTiles, minSpawnDistance);
+        int spawnRadius = Random.Range(minSpawnDistance, maxSpawnDistance + 1);
+        List<Vector2Int> perimeter = MidpointCircle.FindPerimeter(playerPositionInTiles, spawnRadius);
         foreach(Vector2Int pos in perimeter){
             if(tilemapManager.GetTileValue(pos) == -1){
                 availableSpawnPoints.Add(pos);

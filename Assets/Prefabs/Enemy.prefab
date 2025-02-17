@@ -171,18 +171,14 @@ MonoBehaviour:
   enemyInfo: {fileID: 11400000, guid: abe99f7e105b239499c3bb599710a934, type: 2}
   currentHealth: 0
   enemyManager: {fileID: 0}
-  movementPoints: []
   rb: {fileID: 3416815691692295145}
+  enemySprite: {fileID: 3416815691652177728}
   movementPointTolerence: 0.1
-  timeSinceLastPathfind: 0
-  timeBetweenPathfind: 2
-  enemyState: 0
   visionDistance: 5
   playerMask:
     serializedVersion: 2
     m_Bits: 136
   lastKnownPlayerPosition: {x: 0, y: 0}
-  playerVisible: 0
   playerEscaped: 0
   lastSeenPositions: []
   maxPsycheDistance: 5

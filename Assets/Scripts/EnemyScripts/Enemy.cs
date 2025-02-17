@@ -13,6 +13,8 @@ public class Enemy : MonoBehaviour
 
     public Rigidbody2D rb;
 
+    public GameObject enemySprite;
+
     public float movementPointTolerence;
 
     public EnemyState enemyState;
@@ -38,7 +40,7 @@ public class Enemy : MonoBehaviour
     }
 
     public void StateUpdate(Vector2 playerPosition){
-        //timeSinceLastPathfind += Time.deltaTime;
+        enemyState.UpdateEnemy(playerPosition);
 
     }
 
@@ -74,7 +76,6 @@ public class Enemy : MonoBehaviour
     }
 
     public void HandleCoroutine(IEnumerator coroutine){
-        Debug.Log("Coroutine Started");
         StartCoroutine(coroutine);
     }
 }
