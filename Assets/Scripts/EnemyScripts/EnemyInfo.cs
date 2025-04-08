@@ -6,7 +6,9 @@ using UnityEngine;
 public class EnemyInfo : ScriptableObject
 {
     public float speed;
+    public float acceleration;
     public int maxHealth;
     public float attackSpeed;
     public int attackDamage;
+
 }

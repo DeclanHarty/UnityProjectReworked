@@ -4,6 +4,7 @@ using UnityEngine;
 
 public abstract class HeldItem
 {
+    public HeldItemController heldItemController;
     public GameObject sprite;
     public Vector2 mousePos;
     public Vector2 mouseDirection;
@@ -22,6 +23,10 @@ public abstract class HeldItem
 
     public void SetCurrentPosition(Vector2 currentPos){
         this.currentPosition = currentPos;
+    }
+
+    public void InjectHeldItemController(HeldItemController heldItemController){
+        this.heldItemController = heldItemController;
     }
 
     public abstract void Update();

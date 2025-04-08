@@ -173,12 +173,17 @@ MonoBehaviour:
   enemyManager: {fileID: 0}
   rb: {fileID: 3416815691692295145}
   enemySprite: {fileID: 3416815691652177728}
-  movementPointTolerence: 0.1
+  movementPointTolerence: 0.5
   visionDistance: 5
   playerMask:
     serializedVersion: 2
     m_Bits: 136
+  groundMask:
+    serializedVersion: 2
+    m_Bits: 8
   lastKnownPlayerPosition: {x: 0, y: 0}
   playerEscaped: 0
   lastSeenPositions: []
   maxPsycheDistance: 5
+  currentVelocity: {x: 0, y: 0}
+  maxTargetDisplacement: 1

@@ -7,6 +7,7 @@ public class GameOver : GameState
     public override void OnStateEnter()
     {
         gameManager.enemyManager.StopAllCoroutines();
+        gameManager.enemyManager.PauseEnemies();
         gameManager.playerManager.ClearAllPlayerVelocity();
         gameManager.uIManager.ActivateGameOverScreen();
     }

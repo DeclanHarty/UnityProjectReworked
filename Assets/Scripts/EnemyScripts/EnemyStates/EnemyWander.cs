@@ -16,7 +16,7 @@ public class EnemyWander : EnemyState
 
     public override void OnStateChange()
     {
-        return;
+        enemy.ClearAllVelocity();
     }
 
     public override void UpdateEnemy(Vector2 playerPosition)

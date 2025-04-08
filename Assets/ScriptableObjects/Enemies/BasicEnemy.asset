@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: BasicEnemy
   m_EditorClassIdentifier: 
   speed: 2
+  acceleration: 8
   maxHealth: 10
   attackSpeed: 3
   attackDamage: 3

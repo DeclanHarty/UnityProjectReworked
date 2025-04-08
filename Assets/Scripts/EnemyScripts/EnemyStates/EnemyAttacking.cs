@@ -21,6 +21,7 @@ public class EnemyAttacking : TrackingEnemyState
     public override void OnStateChange()
     {
         timePassed = 0;
+        enemy.ClearAllVelocity();
         enemy.HandleCoroutine(Attack(enemy.lastKnownPlayerPosition));
     }
 

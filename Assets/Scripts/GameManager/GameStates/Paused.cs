@@ -8,6 +8,7 @@ public class Paused : GameState
     {
         gameManager.uIManager.ActivatePauseScreen();
         gameManager.playerManager.ClearRBVelocity();
+        gameManager.enemyManager.PauseEnemies();
     }
 
     public override void OnStateExit()

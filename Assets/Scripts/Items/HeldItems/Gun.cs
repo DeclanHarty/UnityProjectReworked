@@ -56,5 +56,6 @@ public class Gun : HeldItem
     public override void Update()
     {
         timeSinceLastFired += Time.deltaTime;
+        heldItemController.ammoIndicator.SetAmmoFillIndicator(Mathf.Min(timeSinceLastFired/firingSpeed, 1f));
     }
 }

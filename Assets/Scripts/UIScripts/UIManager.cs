@@ -18,6 +18,7 @@ public class UIManager : MonoBehaviour
         playerUIObject.GetComponent<PlayerUI>().UpdatePlayerHealthBar(healthPercentage);
     }
 
+
     public void ActivateGameOverScreen(){
         GameOverScreen.SetActive(true);
     }

@@ -104,4 +104,10 @@ public class EnemyManager : MonoBehaviour
     public void EnemyDamagedPlayer(int damage){
         gameManager.PlayerTookDamage(damage);
     }
+
+    public void PauseEnemies(){
+        foreach(Enemy enemy in activeEnemies){
+            enemy.StopRBVelocity();
+        }
+    }
 }
